@@ -1,4 +1,5 @@
 from django.db import models
+from django.contrib.auth.models import User
 
 class Album(models.Model):
   album_img = models.ImageField(upload_to="gambar_album/")
@@ -14,6 +15,8 @@ class Album(models.Model):
     return f'{self.nama} - {self.artis}'
 
 class Playlist(models.Model):
+  user = models.ForeignKey(User, on_delete=models.CASCADE)
+  playlist_img = models.ImageField(upload_to="gambar_playlist")
   nama = models.CharField(max_length=100)
 
   class Meta:
@@ -42,7 +45,7 @@ class Lagu(models.Model):
   audio_file = models.FileField(upload_to="file_audio")
 
   album = models.ForeignKey(Album, on_delete=models.CASCADE)
-  playlist = models.ManyToManyField(Playlist, blank=True, null=True)
+  playlist = models.ManyToManyField(Playlist, blank=True)
 
   class Meta:
     verbose_name = "Lagu"

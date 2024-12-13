@@ -24,7 +24,7 @@ class AlbumForm(forms.ModelForm):
 class PlaylistForm(forms.ModelForm):
   class Meta:
     model = Playlist
-    fields = '__all__'
+    fields = ['playlist_img','nama']
 
 class AlbumForm(forms.ModelForm):
   class Meta:

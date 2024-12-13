@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+
+{% block title %}User Login Page{% endblock title %}
+
+{% block content %}
+<h1>Login Page</h1>
+
+<form action="" method="post">
+  {% csrf_token %}
+  {{form|crispy}}
+
+  <button type="submit">Login</button>
+</form>
+
+<p>Belum punya akun? <a href="{% url 'base:user_register' %}">Daftar</a></p>
+{% endblock content %}

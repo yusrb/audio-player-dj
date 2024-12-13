@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+
+{% block title %}
+  {{ album.nama }}
+{% endblock title %}
+
+{% block content %}
+<div class="container-fluid mt-4">
+  <a href="{% url 'base:daftar_genre' %}">Kembali</a>
+
+  <div class="row">
+    <div class="col-md-4">
+      <h1>{{genre.nama}}</h1>
+    </div>
+
+    <div class="col-md-8">
+      <h3>Daftar Genre</h3>
+      {% for lagu in all_lagu_with_genres %}
+        <a href="{% url 'base:detail_lagu' lagu.pk %}">
+          <h5>{{ lagu.judul }}</h5>
+        </a>
+      {% endfor %}
+    </div>
+  </div>
+</div>
+{% endblock content %}
