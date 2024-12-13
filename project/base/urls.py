@@ -4,6 +4,12 @@ from .views import (
   UserRegisterView,
   UserLogoutView,
 
+  daftar_artis,
+  profil_artis,
+  tambah_artis,
+  edit_artis,
+  hapus_artis,
+
   daftar_lagu,
   detail_lagu,
   tambah_lagu,
@@ -35,6 +41,13 @@ urlpatterns = [
   path('auth/login', UserLoginView.as_view(), name="user_login"),
   path('auth/register', UserRegisterView.as_view(), name="user_register"),
   path('auth/logout', UserLogoutView.as_view(), name="user_logout"),
+
+  path('profil', daftar_artis, name="daftar_artis"),
+  path('profil/<int:pk>', profil_artis, name="profil_artis"),
+  path('profil/tambah', tambah_artis, name="tambah_artis"),
+  path('profil/edit/<int:pk>', edit_artis, name="edit_artis"),
+  path('profil/hapus/<int:pk>', hapus_artis, name="hapus_artis"),
+
   path('', daftar_lagu, name="daftar_lagu"),
   path('lagu/detail/<int:pk>', detail_lagu, name="detail_lagu"),
   path('lagu/tambah', tambah_lagu, name="tambah_lagu"),

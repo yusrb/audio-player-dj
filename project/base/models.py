@@ -1,10 +1,21 @@
 from django.db import models
 from django.contrib.auth.models import User
 
+class ProfilArtis(models.Model):
+  nama = models.CharField(max_length=100)
+  sampul_foto = models.ImageField(upload_to="sampul_foto")
+
+  class Meta:
+    verbose_name = "Profil Artis"
+    verbose_name_plural = "Profil Artis"
+
+  def __str__(self):
+    return self.nama
+
 class Album(models.Model):
   album_img = models.ImageField(upload_to="gambar_album/")
   nama = models.CharField(max_length=100)
-  artis = models.CharField(max_length=100)
+  artis = models.ForeignKey(ProfilArtis, on_delete=models.CASCADE)
   created_at = models.DateTimeField(auto_now_add=True)
 
   class Meta:
@@ -12,7 +23,7 @@ class Album(models.Model):
     verbose_name_plural = "Album"
 
   def __str__(self):
-    return f'{self.nama} - {self.artis}'
+    return self.nama
 
 class Playlist(models.Model):
   user = models.ForeignKey(User, on_delete=models.CASCADE)
@@ -38,7 +49,7 @@ class Genre(models.Model):
 
 class Lagu(models.Model):
   judul = models.CharField(max_length=150)
-  artis = models.CharField(max_length=100)
+  artis = models.ForeignKey(ProfilArtis, on_delete=models.CASCADE)
   genre = models.ForeignKey(Genre, on_delete=models.CASCADE)
 
   audio_img = models.ImageField(upload_to="gambar_audio")

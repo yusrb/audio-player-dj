@@ -1,10 +1,16 @@
 from django import forms
 from .models import (
+  ProfilArtis,
   Lagu,
   Genre,
   Album,
   Playlist,
 )
+
+class ArtisProfilForm(forms.ModelForm):
+  class Meta:
+    model = ProfilArtis
+    fields = '__all__'
 
 class LaguForm(forms.ModelForm):
   class Meta:

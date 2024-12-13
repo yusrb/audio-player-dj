@@ -1,0 +1,120 @@
+{% extends 'base.html' %}
+
+{% block title %}Daftar Artis{% endblock title %}
+
+{% block content %}
+<div class="container-fluid mt-4">
+  <div class="row">
+    {% include 'snippets/sidebar_left.html' %}
+
+    <div class="col-md-6">
+      <h1 class="text-center mb-4">Daftar Artis</h1>
+
+      <form action="" method="get" class="form-inline mb-4 justify-content-center">
+        <div class="form-group">
+          <input type="text" name="q" class="form-control mr-2" placeholder="Cari artis..." value="{{ search_query }}">
+          <button type="submit" class="btn btn-primary">Cari</button>
+        </div>
+      </form>
+
+      {% if artists %}
+        <div class="row">
+          {% for artist in artists %}
+          <div class="col-md-4 mb-4">
+            <div class="artist-card position-relative">
+              <a href="{% url 'base:profil_artis' artist.pk %}" class="card-link">
+                <div class="card h-100">
+                  <div class="card-body text-center">
+                    <div class="artist-image">
+                      <img src="{{ artist.sampul_foto.url }}" alt="{{ artist.nama }}" class="rounded-circle" style="width: 100px; height: 100px; object-fit: cover;">
+                    </div>
+                    <p class="card-title mt-3">{{ artist.nama }}</p>
+                  </div>
+                </div>
+              </a>
+
+              <div class="card-overlay" style="position: absolute; top: 44px;">
+                <a href="{% url 'base:edit_artis' artist.pk %}" class="text-primary mr-2"><i class="fas fa-edit"></i></a>
+                <!-- Form hapus artis -->
+                <form action="{% url 'base:hapus_artis' artist.pk %}" method="POST" style="display:inline;">
+                  {% csrf_token %}
+                  <button type="submit" class="text-danger bg-transparent border-0 delete-btn"><i class="fas fa-trash"></i></button>
+                </form>
+              </div>
+            </div>
+          </div>
+          {% endfor %}
+        </div>
+      {% else %}
+        <p class="text-center">Tidak ada artis</p>
+      {% endif %}
+    </div>
+
+    {% include 'snippets/sidebar_right.html' %}
+  </div>
+</div>
+
+<style>
+  .artist-card {
+    display: block;
+    text-decoration: none;
+    position: relative;
+  }
+
+  .artist-card .card {
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+
+  .artist-card:hover .card {
+    transform: translateY(-5px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+
+  .artist-card .card-body {
+    padding: 20px;
+    background-color: #f9f9f9;
+  }
+
+  .artist-card .card-title {
+    font-size: 18px;
+    font-weight: bold;
+    color: #333;
+  }
+
+  .artist-card .card-body:hover {
+    background-color: #f1f1f1;
+  }
+
+  .artist-image {
+    width: 100px;
+    height: 100px;
+    margin: 0 auto;
+  }
+
+  .card-overlay {
+    display: none;
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    z-index: 10;
+  }
+
+  .artist-card:hover .card-overlay {
+    display: block;
+  }
+
+  .card-overlay a {
+    font-size: 20px;
+    color: white;
+    margin-left: 10px;
+    transition: color 0.3s ease;
+  }
+
+  .card-overlay a:hover {
+    color: #f0ad4e;
+  }
+</style>
+
+{% endblock content %}

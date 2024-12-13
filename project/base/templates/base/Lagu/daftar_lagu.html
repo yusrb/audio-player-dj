@@ -18,28 +18,34 @@
       </form>
 
       {% if lagus %}
-        <div class="row">
-          {% for lagu in lagus %}
-            <div class="col-md-4 mb-4">
-              <div class="card position-relative">
-                <img src="{{ lagu.audio_img.url }}" alt="{{ lagu.judul }}" class="card-img-top hover-darken">
-                <div class="card-overlay position-absolute top-0 right-0 p-2" style="display: none;">
-                  <a href="{% url 'base:edit_lagu' lagu.pk %}" class="text-primary mr-2"><i class="fas fa-edit"></i></a>
-                  <button class="text-danger delete-btn" data-url="{% url 'base:hapus_lagu' lagu.pk %}"><i class="fas fa-trash"></i></button>
-                </div>
-                <div class="card-body">
-                  <h5 class="card-title">{{ lagu.judul }}</h5>
-                  <p class="card-text">Artis: {{ lagu.artis }}</p>
-                  <p class="card-text">Album: {{ lagu.album }}</p>
-                  <p class="card-text">Genre: {{ lagu.genre }}</p>
-                  <a href="{% url 'base:detail_lagu' lagu.pk %}" class="btn btn-primary">Lihat Detail</a>
-                </div>
-              </div>
+      <div class="row">
+        {% for lagu in lagus %}
+        <div class="col-md-4 mb-4">
+          <div class="card position-relative">
+            <img src="{{ lagu.audio_img.url }}" alt="{{ lagu.judul }}" class="card-img-top hover-darken">
+            <div class="card-overlay position-absolute top-0 right-0 p-2" style="display: none;">
+              <a href="{% url 'base:edit_lagu' lagu.pk %}" class="text-primary mr-2"><i class="fas fa-edit"></i></a>
+              <button class="text-danger delete-btn" data-url="{% url 'base:hapus_lagu' lagu.pk %}"><i
+                  class="fas fa-trash"></i></button>
             </div>
-          {% endfor %}
+            <div class="card-body">
+              <h5 class="card-title">{{ lagu.judul }}</h5>
+              <p class="card-text">Artis: <a href="{% url 'base:profil_artis' lagu.artis.pk %}">{{ lagu.artis }}</a></p>
+              
+              <p class="card-text">Album: <a href="{% url 'base:detail_album' lagu.album.pk %}">
+                {{ lagu.album }}
+              </a></p>
+              <p class="card-text">Genre: <a href="{% url 'base:detail_genre' lagu.genre.pk %}">
+                {{ lagu.genre }}
+              </a></p>
+              <a href="{% url 'base:detail_lagu' lagu.pk %}" class="btn btn-primary">Lihat Detail</a>
+            </div>
+          </div>
         </div>
+        {% endfor %}
+      </div>
       {% else %}
-        <p class="text-center">Tidak ada lagu</p>
+      <p class="text-center">Tidak ada lagu</p>
       {% endif %}
     </div>
 
@@ -71,11 +77,11 @@
 <script>
   const cardImages = document.querySelectorAll('.card-img-top');
   cardImages.forEach(image => {
-    image.addEventListener('mouseover', function() {
+    image.addEventListener('mouseover', function () {
       this.classList.add('darken');
       this.nextElementSibling.style.display = 'block';
     });
-    image.addEventListener('mouseout', function() {
+    image.addEventListener('mouseout', function () {
       this.classList.remove('darken');
       this.nextElementSibling.style.display = 'none';
     });
@@ -83,7 +89,7 @@
 
   const deleteButtons = document.querySelectorAll('.delete-btn');
   deleteButtons.forEach(button => {
-    button.addEventListener('click', function(e) {
+    button.addEventListener('click', function (e) {
       e.preventDefault();
       const url = this.getAttribute('data-url');
       const form = document.getElementById('deleteForm');

@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+
+{% block title %}
+  Tambah Artis
+{% endblock title %}
+
+{% block content %}
+<div class="container mt-5">
+  <h1 class="text-center mb-4">Tambah Artis</h1>
+
+  <div class="row justify-content-center">
+    <div class="col-md-8">
+      <div class="card shadow-sm rounded p-4">
+        <h4 class="card-title text-center mb-4">Formulir Tambah Artis</h4>
+
+        <form action="" method="post" enctype="multipart/form-data">
+          {% csrf_token %}
+          <div class="form-group">
+            {{ form|crispy }}
+          </div>
+
+          <div class="text-center mt-4">
+            <button type="submit" class="btn btn-success btn-lg w-100">Tambah Artis</button>
+          </div>
+        </form>
+
+        <div class="text-center mt-3">
+          <a href="{% url 'base:daftar_lagu' %}" class="btn btn-link">Kembali ke Daftar Lagu</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock content %}

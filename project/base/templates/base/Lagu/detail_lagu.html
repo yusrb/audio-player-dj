@@ -20,7 +20,7 @@ Play {{ lagu.judul }}
     <!-- Detail Lagu -->
     <div class="col-md-8">
       <h1>{{ lagu.judul }}</h1>
-      <p><strong>Artis:</strong> <a href="#">{{ lagu.artis }}</a></p>
+      <p><strong>Artis:</strong> <a href="{% url 'base:profil_artis' lagu.artis.pk %}">{{ lagu.artis }}</a></p>
       <p><strong>Album:</strong> <a href="{% url 'base:detail_album' lagu.album.pk %}">{{ lagu.album }}</a></p>
       <p><strong>Genre:</strong> <a href="{% url 'base:detail_genre' lagu.genre.pk %}">{{ lagu.genre }}</a></p>
     </div>

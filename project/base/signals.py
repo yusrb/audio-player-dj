@@ -33,16 +33,16 @@ def delete_lagu_files(sender, instance, **kwargs):
 def delete_old_album_files(sender, instance, **kwargs):
     if instance.pk:
         old_instance = Album.objects.get(pk=instance.pk)
-        if 'cover_image' in instance.__dict__ and instance.cover_image != old_instance.cover_image:
-            if old_instance.cover_image:
-                old_image_path = old_instance.cover_image.path
+        if 'album_img' in instance.__dict__ and instance.album_img != old_instance.album_img:
+            if old_instance.album_img:
+                old_image_path = old_instance.album_img.path
                 if os.path.isfile(old_image_path):
                     os.remove(old_image_path)
 
 @receiver(post_delete, sender=Album)
 def delete_album_files(sender, instance, **kwargs):
-    if instance.cover_image:
-        old_image_path = instance.cover_image.path
+    if instance.album_img:
+        old_image_path = instance.album_img.path
         if os.path.isfile(old_image_path):
             os.remove(old_image_path)
 

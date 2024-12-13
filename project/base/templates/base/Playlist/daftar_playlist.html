@@ -25,9 +25,15 @@
                 <a href="{% url 'base:detail_playlist' playlist.pk %}">
                   <img src="{{ playlist.playlist_img.url }}" alt="{{ playlist.nama }}" class="card-img-top hover-darken" style="height: 200px; object-fit: cover;">
                 </a>
-                <div class="card-overlay position-absolute top-0 right-0 p-2" style="display: none;">
+                <!-- Overlay with Edit and Delete buttons -->
+                <div class="card-overlay position-absolute top-0 right-0 p-2">
                   <a href="{% url 'base:edit_playlist' playlist.pk %}" class="text-primary mr-2"><i class="fas fa-edit"></i></a>
-                  <a href="#" class="text-danger delete-btn" data-url="{% url 'base:hapus_playlist' playlist.pk %}"><i class="fas fa-trash"></i></a>
+                  <form action="{% url 'base:hapus_playlist' playlist.pk %}" method="post">
+                    {% csrf_token %}
+                    <button type="submit">
+                      <i class="fas fa-trash"></i>
+                    </button>
+                </form>
                 </div>
                 <div class="card-body">
                   <h5 class="card-title">{{ playlist.nama }}</h5>
@@ -70,11 +76,11 @@
   cardImages.forEach(image => {
     image.addEventListener('mouseover', function() {
       this.classList.add('darken');
-      this.nextElementSibling.style.display = 'block';
+      this.closest('.card').querySelector('.card-overlay').style.display = 'flex';  // Show overlay
     });
     image.addEventListener('mouseout', function() {
       this.classList.remove('darken');
-      this.nextElementSibling.style.display = 'none';
+      this.closest('.card').querySelector('.card-overlay').style.display = 'none';  // Hide overlay
     });
   });
 
@@ -90,12 +96,15 @@
 </script>
 
 <style>
+  /* Gambar menjadi gelap hanya saat dihover */
   .hover-darken {
     transition: filter 0.3s ease;
+        background: rgba(0, 0, 0, 0.5);
   }
 
   .hover-darken.darken {
-    filter: brightness(0.5);
+    filter: brightness(0.5); /* Gambar jadi gelap */
+    background: rgba(0, 0, 0, 0.5);
   }
 
   .card-overlay {
@@ -105,15 +114,13 @@
     left: 0;
     width: 100%;
     height: 100%;
-    background: rgba(0, 0, 0, 0.5);
+    {% comment %} background: rgba(0, 0, 0, 0.5); {% endcomment %}
     color: white;
     display: flex;
     justify-content: flex-end;
     align-items: flex-start;
     padding: 10px;
     z-index: 10;
-    opacity: 0;
-    transition: opacity 0.3s ease;
   }
 
   .card-overlay a {
@@ -125,10 +132,6 @@
 
   .card-overlay a:hover {
     color: #f0ad4e;
-  }
-
-  .card-overlay.show {
-    opacity: 1;
   }
 </style>
 {% endblock content %}

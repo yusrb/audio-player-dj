@@ -8,12 +8,14 @@ from django.contrib.auth.models import User
 from django.urls import reverse_lazy
 from django.db.models import Q
 from .models import (
+  ProfilArtis,
   Lagu,
   Genre,
   Album,
   Playlist,
 )
 from .forms import (
+  ArtisProfilForm,
   LaguForm,
   GenreForm,
   AlbumForm,
@@ -44,13 +46,79 @@ class UserLogoutView(LogoutView):
     return reverse_lazy('base:user_login')
 
 @login_required
+def daftar_artis(request):
+  all_artis = ProfilArtis.objects.all()
+
+  context = {
+    'artists': all_artis
+  }
+
+  return render(request, 'base/Artis/daftar_artis.html', context)
+
+@login_required
+def profil_artis(request, pk):
+  get_artis = ProfilArtis.objects.get(pk=pk)
+  all_lagu = get_artis.lagu_set.all()
+  all_album = get_artis.album_set.all()
+
+  context = {
+    'artis': get_artis,
+    'all_lagu': all_lagu,
+    'all_album': all_album,
+  }
+
+  return render(request, 'base/Artis/detail_artis.html', context)
+
+@login_required
+def tambah_artis(request):
+  if request.method == 'POST':
+    form = ArtisProfilForm(request.POST, request.FILES)
+    if form.is_valid():
+      form.save()
+      return redirect('base:daftar_lagu')
+  else:
+    form = ArtisProfilForm()
+
+  context = {
+    'form': form
+  }
+
+  return render(request, 'base/Artis/tambah_artis.html', context)
+
+@login_required
+def edit_artis(request, pk):
+  edit_artis = ProfilArtis.objects.get(pk=pk)
+  if request.method == 'POST':
+    form = ArtisProfilForm(request.POST, request.FILES, instance=edit_artis)
+    if form.is_valid():
+      form.save()
+      return redirect('base:daftar_lagu')
+  else:
+    form = ArtisProfilForm(instance=edit_artis)
+
+  context = {
+    'form': form,
+  }
+
+  return render(request, 'base/Artis/edit_artis.html', context)
+
+@login_required
+def hapus_artis(request, pk):
+  get_artis = ProfilArtis.objects.get(pk=pk)
+
+  if request.method == 'POST':
+    get_artis.delete()
+    return redirect('base:daftar_lagu')
+
+  return render(request, 'base/Artis/daftar_artis.html')
+
+@login_required
 def daftar_lagu(request):
     get_lagu = Lagu.objects.all()
     search_query = request.GET.get('q', '')
     if search_query:
         get_lagu = get_lagu.filter(
-            Q(judul__icontains=search_query) |
-            Q(artis__icontains=search_query)
+            Q(judul__icontains=search_query)
         )
     context = {
         'lagus': get_lagu,
@@ -323,7 +391,7 @@ def edit_playlist(request, pk):
       form.save()
       return redirect('base:daftar_playlist')
   else:
-    form = PlaylistForm()
+    form = PlaylistForm(instance=get_playlist)
 
   context = {
     'form': form

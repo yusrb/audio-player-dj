@@ -4,14 +4,52 @@
 {% block title %}User Register Page{% endblock title %}
 
 {% block content %}
-<h1>Register Page</h1>
+<div class="container mt-5">
+  <div class="row justify-content-center">
+    <div class="col-md-6">
+      <h1 class="text-center mb-4">Register</h1>
 
-<form action="" method="post">
-  {% csrf_token %}
-  {{form|crispy}}
+      <form action="" method="post">
+        {% csrf_token %}
+        <div class="form-group">
+          {{ form|crispy }}
+        </div>
+        <button type="submit" class="btn btn-success btn-block">Register</button>
+      </form>
 
-  <button type="submit">Register</button>
-</form>
+      <p class="text-center mt-3">Sudah punya akun? <a href="{% url 'base:user_login' %}">Login</a></p>
+    </div>
+  </div>
+</div>
 
-<p>Sudah punya akun? <a href="{% url 'base:user_login' %}">Login</a></p>
+<style>
+  .container {
+    max-width: 600px;
+    padding: 20px;
+  }
+
+  h1 {
+    font-size: 2rem;
+    color: #333;
+  }
+
+  .form-group {
+    margin-bottom: 1.5rem;
+  }
+
+  button[type="submit"] {
+    font-size: 1.1rem;
+    padding: 10px;
+  }
+
+  .text-center a {
+    color: #007bff;
+    font-weight: bold;
+  }
+
+  .text-center a:hover {
+    text-decoration: underline;
+  }
+</style>
+
 {% endblock content %}

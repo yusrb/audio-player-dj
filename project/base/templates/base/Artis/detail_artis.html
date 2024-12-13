@@ -1,0 +1,54 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ artis.nama }}{% endblock title %}
+
+{% block content %}
+<!-- Fullscreen cover image with left and right padding -->
+<div class="container-fluid p-0">
+    <img src="{{ artis.sampul_foto.url }}" alt="{{ artis.nama }}" class="img-fluid w-100" style="height: 50vh; object-fit: cover; padding-left: 20px; padding-right: 20px;">
+</div>
+
+<!-- Artis Name and Back Button positioned under the name -->
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-md-12 text-center">
+            <h1 class="display-4">{{ artis.nama }}</h1>
+            <a href="{% url 'base:daftar_lagu' %}" class="btn btn-secondary mt-3">Kembali ke Daftar Lagu</a>
+        </div>
+    </div>
+
+    <div class="mt-4">
+        <h2>Daftar Lagu</h2>
+        <div class="row">
+            {% for lagu in all_lagu %}
+            <div class="col-md-4 mb-3">
+                <div class="card">
+                    <img src="{{ lagu.audio_img.url }}" alt="{{ lagu.judul }}" class="card-img-top">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ lagu.judul }}</h5>
+                        <a href="{% url 'base:detail_lagu' lagu.pk %}" class="btn btn-primary">Lihat Detail</a>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <div class="mt-4">
+        <h2>Daftar Album</h2>
+        <div class="row">
+            {% for album in all_album %}
+            <div class="col-md-4 mb-3">
+                <div class="card">
+                    <img src="{{ album.album_img.url }}" alt="{{ album.nama }}" class="card-img-top">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ album.nama }}</h5>
+                        <a href="{% url 'base:detail_album' album.pk %}" class="btn btn-primary">Lihat Detail</a>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock content %}
