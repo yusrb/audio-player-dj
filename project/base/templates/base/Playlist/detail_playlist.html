@@ -16,7 +16,7 @@
 
     <div class="col-md-8">
       <h3>Daftar Lagu</h3>
-      {% for lagu in playlist_lagu_all %}
+      {% for lagu in playlist.lagu_set.all %}
         <div class="d-flex justify-content-between align-items-center">
           <a href="{% url 'base:detail_lagu' lagu.pk %}">
             <h5>{{ lagu.judul }}</h5>
@@ -29,9 +29,9 @@
       {% endfor %}
 
       <h3 class="mt-4">Tambah Lagu ke Playlist</h3>
-      <form id="addLaguForm" method="POST">
+      <form method="POST" action="{% url 'base:tambah_lagu_on_playlist' playlist.id %}">
         {% csrf_token %}
-        <select id="laguSelect" name="lagu" class="form-control">
+        <select name="lagu" class="form-control">
           {% for lagu in all_lagu %}
             <option value="{{ lagu.id }}">{{ lagu.judul }}</option>
           {% endfor %}

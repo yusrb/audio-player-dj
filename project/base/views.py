@@ -282,19 +282,15 @@ def daftar_playlist(request):
 
 @login_required
 def detail_playlist(request, pk):
-  get_playlist = Playlist.objects.get(pk=pk)
-  get_all_song = Lagu.objects.all()
-  get_all_song_on_playlist = get_playlist.lagu_set.all()
-  lagus = Lagu.objects.all()
+    get_playlist = Playlist.objects.get(pk=pk)
+    all_lagu = Lagu.objects.all()  # Mengambil semua lagu yang tersedia
 
-  context = {
-    'playlist': get_playlist,
-    'all_lagu': get_all_song,
-    'playlist_lagu_all': get_all_song_on_playlist,
-    'lagu': lagus
-  }
+    context = {
+        'playlist': get_playlist,
+        'all_lagu': all_lagu  # Mengirimkan semua lagu ke template
+    }
 
-  return render(request, 'base/Playlist/detail_playlist.html', context)
+    return render(request, 'base/Playlist/detail_playlist.html', context)
 
 @login_required
 def tambah_playlist(request):
@@ -342,6 +338,7 @@ def hapus_playlist(request, pk):
 
   return render(request, 'base/Playlist/daftar_playlist.html')
 
+
 @login_required
 def tambah_lagu_on_playlist(request, playlist_id):
     playlist = Playlist.objects.get(id=playlist_id)
@@ -350,7 +347,7 @@ def tambah_lagu_on_playlist(request, playlist_id):
         lagu_id = request.POST.get('lagu')
         if lagu_id:
             lagu = Lagu.objects.get(id=lagu_id)
-            playlist.lagu.add(lagu)
+            playlist.lagu_set.add(lagu)
 
     return redirect('base:detail_playlist', pk=playlist.id)
 
@@ -358,6 +355,6 @@ def tambah_lagu_on_playlist(request, playlist_id):
 def hapus_lagu_on_playlist(request, playlist_id, lagu_id):
     playlist = Playlist.objects.get(id=playlist_id)
     lagu = Lagu.objects.get(id=lagu_id)
-    playlist.lagu.remove(lagu)
+    playlist.lagu_set.remove(lagu)
 
     return redirect('base:detail_playlist', pk=playlist.id)

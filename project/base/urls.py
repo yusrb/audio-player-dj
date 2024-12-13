@@ -58,6 +58,6 @@ urlpatterns = [
   path('playlist/tambah', tambah_playlist, name="tambah_playlist"),
   path('playlist/edit/<int:pk>' , edit_playlist, name="edit_playlist"),
   path('playlist/hapus/<int:pk>' , hapus_playlist, name="hapus_playlist"),
-  path('playlist/<int:playlist_id>/tambah/<int:lagu_id>', tambah_lagu_on_playlist, name="tambah_lagu_on_playlist"),
-  path('playlist/<int:playlist_id>/hapus/<int:lagu_id>', hapus_lagu_on_playlist, name="hapus_lagu_on_playlist"),
+  path('playlist/<int:playlist_id>/tambah/', tambah_lagu_on_playlist, name="tambah_lagu_on_playlist"),
+  path('playlist/<int:playlist_id>/hapus/<int:lagu_id>/', hapus_lagu_on_playlist, name="hapus_lagu_on_playlist"),
 ]
