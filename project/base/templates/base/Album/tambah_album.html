@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+
+{% block title %}
+  Tambah Album
+{% endblock title %}
+
+{% block content %}
+<div class="container mt-4">
+  <h1>Tambah Album</h1>
+
+  <form action="" method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    <div class="form-group">
+      {{ form|crispy }}
+    </div>
+    <button type="submit" class="btn btn-success">Tambah</button>
+  </form>
+
+  <a href="{% url 'base:daftar_lagu' %}" class="btn btn-secondary mt-3">Kembali</a>
+</div>
+{% endblock content %}

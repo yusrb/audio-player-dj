@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+
+{% block title %}Edit Lagu{% endblock title %}
+
+{% block content %}
+<h1>Edit Lagu</h1>
+
+<form action="" method="post" enctype="multipart/form-data">
+  {% csrf_token %}
+  {{form|crispy}}
+  <button type="submit">Edit</button>
+</form>
+
+<a href="{% url 'base:daftar_lagu' %}">Kembali</a>
+{% endblock content %}

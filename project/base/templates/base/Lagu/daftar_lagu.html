@@ -1,0 +1,105 @@
+{% extends 'base.html' %}
+
+{% block title %}Daftar Lagu{% endblock title %}
+
+{% block content %}
+<div class="container-fluid mt-4">
+  <div class="row">
+    {% include 'snippets/sidebar_left.html' %}
+
+    <div class="col-md-6">
+      <h1 class="text-center mb-4">Daftar Lagu</h1>
+
+      <form action="" method="get" class="form-inline mb-4 justify-content-center">
+        <div class="form-group">
+          <input type="text" name="q" class="form-control mr-2" placeholder="Cari lagu..." value="{{ search_query }}">
+          <button type="submit" class="btn btn-primary">Cari</button>
+        </div>
+      </form>
+
+      {% if lagus %}
+        <div class="row">
+          {% for lagu in lagus %}
+            <div class="col-md-4 mb-4">
+              <div class="card position-relative">
+                <img src="{{ lagu.audio_img.url }}" alt="{{ lagu.judul }}" class="card-img-top hover-darken">
+                <div class="card-overlay position-absolute top-0 right-0 p-2" style="display: none;">
+                  <a href="{% url 'base:edit_lagu' lagu.pk %}" class="text-primary mr-2"><i class="fas fa-edit"></i></a>
+                  <a href="#" class="text-danger delete-btn" data-url="{% url 'base:hapus_lagu' lagu.pk %}"><i class="fas fa-trash"></i></a>
+                </div>
+                <div class="card-body">
+                  <h5 class="card-title">{{ lagu.judul }}</h5>
+                  <p class="card-text">Artis: {{ lagu.artis }}</p>
+                  <p class="card-text">Album: {{ lagu.album }}</p>
+                  <p class="card-text">Genre: {{ lagu.genre }}</p>
+                  <a href="{% url 'base:detail_lagu' lagu.pk %}" class="btn btn-primary">Lihat Detail</a>
+                </div>
+              </div>
+            </div>
+          {% endfor %}
+        </div>
+      {% else %}
+        <p class="text-center">Tidak ada lagu</p>
+      {% endif %}
+    </div>
+
+    {% include 'snippets/sidebar_right.html' %}
+  </div>
+</div>
+
+<div class="modal" tabindex="-1" id="deleteModal">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Konfirmasi Hapus</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <p>Apakah Anda yakin ingin menghapus lagu ini?</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+        <a href="#" id="confirmDelete" class="btn btn-danger">Hapus</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  const cardImages = document.querySelectorAll('.card-img-top');
+  cardImages.forEach(image => {
+    image.addEventListener('mouseover', function() {
+      this.classList.add('darken');
+      this.nextElementSibling.style.display = 'block';
+    });
+    image.addEventListener('mouseout', function() {
+      this.classList.remove('darken');
+      this.nextElementSibling.style.display = 'none';
+    });
+  });
+
+  const deleteButtons = document.querySelectorAll('.delete-btn');
+  deleteButtons.forEach(button => {
+    button.addEventListener('click', function(e) {
+      e.preventDefault();
+      const url = this.getAttribute('data-url');
+      document.getElementById('confirmDelete').setAttribute('href', url);
+      new bootstrap.Modal(document.getElementById('deleteModal')).show();
+    });
+  });
+</script>
+
+<style>
+  .hover-darken {
+    transition: filter 0.3s ease;
+  }
+
+  .hover-darken.darken {
+    filter: brightness(0.7);
+  }
+
+  .card-overlay {
+    display: none;
+  }
+</style>
+{% endblock content %}
