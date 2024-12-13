@@ -114,7 +114,7 @@ def hapus_lagu(request,pk):
   get_lagu = Lagu.objects.get(pk=pk)
   if request.method == 'POST':
     get_lagu.delete()
-    return redirect('base:daftar_konten')
+    return redirect('base:daftar_lagu')
 
   return render(request, 'base/Lagu/daftar_lagu.html')
 
@@ -255,13 +255,16 @@ def edit_genre(request, pk):
 
 @login_required
 def hapus_genre(request, pk):
-  get_genre = Genre.objects.get(pk=pk)
+    try:
+        get_genre = Genre.objects.get(pk=pk)
+    except Genre.DoesNotExist:
+        return redirect('base:daftar_genre')
 
-  if request.method == 'POST':
-    get_genre.delete()
-    return redirect('base:daftar_genre')
+    if request.method == 'POST':
+        get_genre.delete()
+        return redirect('base:daftar_genre')
 
-  return render(request, 'base/Genre/daftar_genre.html')
+    return render(request, 'base/Genre/daftar_genre.html', {'genre': get_genre})
 
 @login_required
 def daftar_playlist(request):

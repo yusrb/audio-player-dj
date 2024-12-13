@@ -9,7 +9,7 @@ from .models import (
 class LaguForm(forms.ModelForm):
   class Meta:
     model = Lagu
-    fields = '__all__'
+    fields = ('judul','artis','album','genre','audio_img','audio_file',)
 
 class GenreForm(forms.ModelForm):
   class Meta:

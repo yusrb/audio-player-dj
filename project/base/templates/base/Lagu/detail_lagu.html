@@ -13,7 +13,7 @@ Play {{ lagu.judul }}
       <img src="{{ lagu.audio_img.url }}" alt="{{ lagu.judul }}" class="img-fluid mb-3">
       <audio controls class="w-100">
         <source src="{{ lagu.audio_file.url }}" type="audio/mp3">
-        Browser anda tidak support audio 
+        Browser anda tidak support audio
       </audio>
     </div>
 
@@ -22,7 +22,7 @@ Play {{ lagu.judul }}
       <h1>{{ lagu.judul }}</h1>
       <p><strong>Artis:</strong> <a href="#">{{ lagu.artis }}</a></p>
       <p><strong>Album:</strong> <a href="{% url 'base:detail_album' lagu.album.pk %}">{{ lagu.album }}</a></p>
-      <p><strong>Genre:</strong> <a href="#">{{ lagu.genre }}</a></p>
+      <p><strong>Genre:</strong> <a href="{% url 'base:detail_genre' lagu.genre.pk %}">{{ lagu.genre }}</a></p>
     </div>
   </div>
 
@@ -39,7 +39,7 @@ Play {{ lagu.judul }}
           <h5 class="card-title">{{ another.judul }}</h5>
           <p class="card-text"><span style="color:black">Artis:</span> <a href="#">{{ another.artis }}</a></p>
             <p class="card-text">Album: <a href="{% url 'base:detail_album' another.album.pk %}">{{ another.album }}</a></p>
-            <p class="card-text">Genre: <a href="#">{{ another.genre }}</a></p>
+            <p class="card-text">Genre: <a href="{% url 'base:detail_genre' another.genre.pk %}">{{ another.genre }}</a></p>
           </div>
         </div>
       </div>

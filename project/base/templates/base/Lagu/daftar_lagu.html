@@ -25,7 +25,7 @@
                 <img src="{{ lagu.audio_img.url }}" alt="{{ lagu.judul }}" class="card-img-top hover-darken">
                 <div class="card-overlay position-absolute top-0 right-0 p-2" style="display: none;">
                   <a href="{% url 'base:edit_lagu' lagu.pk %}" class="text-primary mr-2"><i class="fas fa-edit"></i></a>
-                  <a href="#" class="text-danger delete-btn" data-url="{% url 'base:hapus_lagu' lagu.pk %}"><i class="fas fa-trash"></i></a>
+                  <button class="text-danger delete-btn" data-url="{% url 'base:hapus_lagu' lagu.pk %}"><i class="fas fa-trash"></i></button>
                 </div>
                 <div class="card-body">
                   <h5 class="card-title">{{ lagu.judul }}</h5>
@@ -47,6 +47,7 @@
   </div>
 </div>
 
+<!-- Modal Konfirmasi Hapus -->
 <div class="modal" tabindex="-1" id="deleteModal">
   <div class="modal-dialog">
     <div class="modal-content">
@@ -58,8 +59,10 @@
         <p>Apakah Anda yakin ingin menghapus lagu ini?</p>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
-        <a href="#" id="confirmDelete" class="btn btn-danger">Hapus</a>
+        <form id="deleteForm" action="" method="POST">
+          {% csrf_token %}
+          <button type="submit" class="btn btn-danger">Hapus</button>
+        </form>
       </div>
     </div>
   </div>
@@ -83,7 +86,8 @@
     button.addEventListener('click', function(e) {
       e.preventDefault();
       const url = this.getAttribute('data-url');
-      document.getElementById('confirmDelete').setAttribute('href', url);
+      const form = document.getElementById('deleteForm');
+      form.setAttribute('action', url);
       new bootstrap.Modal(document.getElementById('deleteModal')).show();
     });
   });

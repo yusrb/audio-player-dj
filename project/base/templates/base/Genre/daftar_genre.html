@@ -32,7 +32,11 @@
 
               <div class="card-overlay" style="position: absolute; top: 44px;">
                 <a href="{% url 'base:edit_genre' genre.pk %}" class="text-primary mr-2"><i class="fas fa-edit"></i></a>
-                <a href="" class="text-danger delete-btn" data-url="{% url 'base:hapus_genre' genre.pk %}"><i class="fas fa-trash"></i></a>
+                <!-- Form hapus genre -->
+                <form action="{% url 'base:hapus_genre' genre.pk %}" method="POST" style="display:inline;">
+                  {% csrf_token %}
+                  <button type="submit" class="text-danger bg-transparent border-0 delete-btn"><i class="fas fa-trash"></i></button>
+                </form>
               </div>
             </div>
           </div>
@@ -46,37 +50,6 @@
     {% include 'snippets/sidebar_right.html' %}
   </div>
 </div>
-
-<!-- Modal Konfirmasi Hapus -->
-<div class="modal" tabindex="-1" id="deleteModal">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title">Konfirmasi Hapus</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-      <div class="modal-body">
-        <p>Apakah Anda yakin ingin menghapus genre ini?</p>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
-        <a href="#" id="confirmDelete" class="btn btn-danger">Hapus</a>
-      </div>
-    </div>
-  </div>
-</div>
-
-<script>
-  const deleteButtons = document.querySelectorAll('.delete-btn');
-  deleteButtons.forEach(button => {
-    button.addEventListener('click', function(e) {
-      e.preventDefault();
-      const url = this.getAttribute('data-url');
-      document.getElementById('confirmDelete').setAttribute('href', url);
-      new bootstrap.Modal(document.getElementById('deleteModal')).show();
-    });
-  });
-</script>
 
 <style>
   .genre-card {
@@ -111,7 +84,6 @@
     background-color: #f1f1f1;
   }
 
-  /* Hide icons by default */
   .card-overlay {
     display: none;
     position: absolute;
@@ -120,7 +92,6 @@
     z-index: 10;
   }
 
-  /* Show icons on card hover */
   .genre-card:hover .card-overlay {
     display: block;
   }
@@ -135,10 +106,6 @@
   .card-overlay a:hover {
     color: #f0ad4e;
   }
-
-  /* Optional: style icons */
-  .card-overlay a {
-    margin: 0 5px;
-  }
 </style>
+
 {% endblock content %}

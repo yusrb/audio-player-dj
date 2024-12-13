@@ -4,5 +4,9 @@
     <a href="{% url 'base:tambah_album' %}" class="btn btn-primary mb-3">Tambah Album</a>
     <a href="{% url 'base:tambah_genre' %}" class="btn btn-warning mb-3">Tambah Genre</a>
     <a href="{% url 'base:tambah_playlist' %}" class="btn btn-warning mb-3">Tambah Playlist</a>
+    <form action="{% url 'base:user_logout' %}" method="post">
+      {% csrf_token %}
+      <button type="submit">Logout</button>
+    </form>
   </div>
 </div>
