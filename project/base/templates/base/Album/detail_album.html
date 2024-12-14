@@ -5,24 +5,106 @@
 {% endblock title %}
 
 {% block content %}
-<div class="container-fluid mt-4">
-  <a href="javascript:history.back()">Kembali</a>
+<div class="container mt-5">
+  <a href="javascript:history.back()" class="btn btn-primary mb-4">
+    <i class="bi bi-arrow-left-circle"></i> Kembali
+  </a>
 
   <div class="row">
-    <!-- Gambar dan Nama Album di Kiri -->
-    <div class="col-md-4">
-      <img src="{{ album.album_img.url }}" alt="{{ album.nama }}" class="img-fluid">
-      <h1 class="mt-3">{{ album.nama }}</h1>
+    <div class="col-md-4 text-center mb-4">
+      <img src="{{ album.album_img.url }}" alt="{{ album.nama }}" class="img-fluid rounded shadow-lg mb-3" style="max-height: 350px; object-fit: cover;">
+      <h1 class="display-4 font-weight-bold">{{ album.nama }}</h1>
+      <a href="{% url 'base:profil_artis' album.artis.pk %}">
+        <h3 class="font-weight-semibold" style="color: gray;">{{ album.artis }}</h3>
+      </a>
     </div>
 
     <div class="col-md-8">
-      <h3>Daftar Lagu</h3>
-      {% for lagu in all_lagu %}
-        <a href="{% url 'base:detail_lagu' lagu.pk %}">
-          <h5>{{ lagu.judul }}</h5>
-        </a>
-      {% endfor %}
+      <h3 class="h3 mb-4">Daftar Lagu</h3>
+      <div class="list-group">
+        {% for lagu in all_lagu %}
+          <a href="{% url 'base:detail_lagu' lagu.pk %}" class="list-group-item list-group-item-action py-3 px-4 mb-2 rounded-lg shadow-sm hover-shadow">
+            <h5 class="mb-1 font-weight-semibold">{{ forloop.counter }}. {{ lagu.judul }}</h5>
+          </a>
+        {% endfor %}
+      </div>
     </div>
   </div>
 </div>
+
+<style>
+  .img-fluid {
+    max-width: 100%;
+    border-radius: 10px;
+  }
+
+  .list-group-item {
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+
+  .list-group-item:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+  }
+
+  .hover-shadow:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  }
+
+  .list-group-item-action:hover {
+    background-color: #f1f1f1;
+  }
+
+  .display-4 {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: #333;
+  }
+
+  .btn-primary {
+    padding: 10px 20px;
+    font-size: 1.1rem;
+    border-radius: 5px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+  }
+
+  .btn-primary:hover {
+    background-color: #0056b3;
+  }
+
+  .list-group-item {
+    padding: 15px;
+    font-size: 1.1rem;
+    color: #444;
+  }
+
+  .font-weight-semibold {
+    font-weight: 600;
+  }
+
+  .mb-4 {
+    margin-bottom: 1.5rem;
+  }
+
+  .mb-2 {
+    margin-bottom: 1rem;
+  }
+
+  .shadow-lg {
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+
+  @media (max-width: 768px) {
+    .display-4 {
+      font-size: 2rem;
+    }
+
+    .list-group-item {
+      padding: 12px;
+    }
+  }
+</style>
+
 {% endblock content %}

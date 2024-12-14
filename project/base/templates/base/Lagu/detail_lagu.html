@@ -6,10 +6,11 @@ Play {{ lagu.judul }}
 
 {% block content %}
 <div class="container mt-4">
-  <a href="javascript:history.back()">Kembali</a>
+  <a href="{% url 'base:daftar_lagu' %}" class="btn btn-primary mb-4">Home</a>
+  <a href="javascript:history.back()" class="btn btn-primary mb-4">Kembali</a>
 
   <div class="row">
-    <div class="col-md-4 mb-4">
+    <div class="col-md-4" style="margin-bottom: 100px">
       <div class="card border-0 shadow-sm rounded-lg">
         <img id="audio-img" src="{{ lagu.audio_img.url }}" alt="{{ lagu.judul }}" class="img-fluid rounded-top" style="cursor: pointer;">
         <audio id="audio-player" controls autoplay volume class="w-100 mt-3 mb-2 rounded" style="border: 1px solid #ddd; border-radius: 8px;">
@@ -24,7 +25,7 @@ Play {{ lagu.judul }}
       <p><strong>Artis:</strong> <a href="{% url 'base:profil_artis' lagu.artis.pk %}" class="text-decoration-none">{{ lagu.artis }}</a></p>
       <p><strong>Album:</strong> <a href="{% url 'base:detail_album' lagu.album.pk %}" class="text-decoration-none">{{ lagu.album }}</a></p>
       <p><strong>Genre:</strong> <a href="{% url 'base:detail_genre' lagu.genre.pk %}" class="text-decoration-none">{{ lagu.genre }}</a></p>
-      
+
       <hr>
 
       <h3>Lirik Lagu</h3>
@@ -47,7 +48,7 @@ Play {{ lagu.judul }}
           <img src="{{ another.audio_img.url }}" alt="{{ another.judul }}" class="card-img-top rounded-top equal-height-img">
           <div class="card-body">
             <h5 class="card-title">{{ another.judul }}</h5>
-            <p class="card-text"><strong>Artis:</strong> <a href="#" class="text-decoration-none">{{ another.artis }}</a></p>
+            <p class="card-text"><strong style="color:#555">Artis:</strong> <a href="{% url 'base:profil_artis' another.artis.pk %}" class="text-decoration-none">{{ another.artis }}</a></p>
             <p class="card-text"><strong>Album:</strong> <a href="{% url 'base:detail_album' another.album.pk %}" class="text-decoration-none">{{ another.album }}</a></p>
             <p class="card-text"><strong>Genre:</strong> <a href="{% url 'base:detail_genre' another.genre.pk %}" class="text-decoration-none">{{ another.genre }}</a></p>
           </div>
@@ -56,10 +57,13 @@ Play {{ lagu.judul }}
     </div>
     {% endfor %}
   </div>
-
 </div>
 
 <style>
+  .icard {
+    transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+  }
+
   .icard {
     display: flex;
     flex-direction: column;
@@ -131,7 +135,7 @@ Play {{ lagu.judul }}
   const audioPlayer = document.getElementById('audio-player');
   const lyricLines = document.querySelectorAll('.lyric-line');
   let currentIndex = 0;
-  const linesPerBatch = 5;
+  const linesPerBatch = 6;
   const lyricTimestampMap = [...lyricLines].map(line => {
     const timestamp = line.getAttribute('data-timestamp');
     const [minutes, seconds] = timestamp.split(':').map(Number);
@@ -164,10 +168,10 @@ Play {{ lagu.judul }}
 
     if (displayedCount >= linesPerBatch) {
       const lastDisplayedLine = lyricTimestampMap[currentIndex + linesPerBatch - 1];
-      if (currentTime >= lastDisplayedLine.time + 2.7) {
+      if (currentTime >= lastDisplayedLine.time + 4.2) {
         currentIndex += linesPerBatch;
         if (currentIndex >= lyricTimestampMap.length) {
-          currentIndex = 0;
+          currentIndex = -1;
         }
       }
     }

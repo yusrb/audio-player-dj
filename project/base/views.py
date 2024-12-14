@@ -50,8 +50,15 @@ class UserLogoutView(LogoutView):
 def daftar_artis(request):
   all_artis = ProfilArtis.objects.all()
 
+  search_query = request.GET.get('q')
+
+  if search_query:
+    all_artis = all_artis.filter(
+      Q(nama__icontains=search_query),
+    )
+
   context = {
-    'artists': all_artis
+    'artists': all_artis,
   }
 
   return render(request, 'base/Artis/daftar_artis.html', context)
@@ -313,6 +320,13 @@ def daftar_genre(request):
 def detail_genre(request, pk):
   get_genre = Genre.objects.get(pk=pk)
   all_lagu_with_genre = get_genre.lagu_set.all()
+
+  search_query = request.GET.get('q')
+
+  if search_query:
+    all_lagu_with_genre = all_lagu_with_genre.filter(
+      Q(judul__icontains=search_query)
+    )
 
   context = {
     'genre': get_genre,

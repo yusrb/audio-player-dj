@@ -1,25 +1,34 @@
 {% extends 'base.html' %}
 
 {% block title %}
-  {{ album.nama }}
+  Detail Genre
 {% endblock title %}
 
 {% block content %}
 <div class="container-fluid mt-4">
-  <a href="javascript:history.back()">Kembali</a>
+  <a href="javascript:history.back()" class="btn btn-link">Kembali</a>
 
-  <div class="row">
-    <div class="col-md-4">
-      <h1>{{genre.nama}}</h1>
+  <div class="row mt-4">
+    <div class="col-md-4 text-center mb-4">
+      <h1>{{ genre.nama }}</h1>
+
+      <form method="GET" action="{% url 'base:detail_genre' genre.pk %}" class="mb-4">
+        <div class="input-group" style="width: 80%; position:relative; left:50px">
+          <input type="text" name="q" value="{{ search_query }}" class="form-control" placeholder="Cari Lagu...">
+          <button class="btn btn-outline-secondary" type="submit">Cari</button>
+        </div>
+      </form>
     </div>
 
     <div class="col-md-8">
-      <h3>Daftar Lagu dengan Genre {{genre.nama}}</h3>
-      {% for lagu in all_lagu_with_genres %}
-        <a href="{% url 'base:detail_lagu' lagu.pk %}">
-          <h5>{{ lagu.judul }}</h5>
-        </a>
-      {% endfor %}
+      <h3 class="mb-4">Daftar Lagu dengan Genre {{ genre.nama }}</h3>
+      <div class="list-group">
+        {% for lagu in all_lagu_with_genres %}
+          <a href="{% url 'base:detail_lagu' lagu.pk %}" class="list-group-item list-group-item-action">
+            <h5 class="mb-1">{{ lagu.judul }}</h5>
+          </a>
+        {% endfor %}
+      </div>
     </div>
   </div>
 </div>

@@ -1,6 +1,5 @@
 <div class="col-md-2">
   <div class="d-flex flex-column align-items-end">
-    <!-- Card untuk tombol manajemen -->
     <div class="card border-0 shadow-sm rounded p-4">
       <h4 class="text-center mb-4">Manajemen Konten</h4>
       <div class="d-grid gap-4">
@@ -15,7 +14,7 @@
         </a>
 
         <a href="{% url 'base:tambah_album' %}" class="btn btn-primary d-flex align-items-center justify-content-between shadow-sm rounded-pill mb-3">
-          <i class="fas fa-album"></i>
+          <i class="fas fa-compact-disc"></i>
           <span>Tambah Album</span>
         </a>
 
@@ -27,6 +26,11 @@
         <a href="{% url 'base:tambah_playlist' %}" class="btn btn-warning d-flex align-items-center justify-content-between shadow-sm rounded-pill mb-3">
           <i class="fas fa-list"></i>
           <span>Tambah Playlist</span>
+        </a>
+
+        <a href="https://lrc-maker.github.io/#/editor/" class="btn btn-info d-flex align-items-center justify-content-between shadow-sm rounded-pill mb-3">
+          <i class="fas fa-file-audio"></i>
+          <span>Buat File LRC</span>
         </a>
 
         <form action="{% url 'base:user_logout' %}" method="post" class="mt-3">
