@@ -1,23 +1,21 @@
-{% extends 'base.html' %}
-{% load crispy_forms_tags %}
-
-{% block title %}User Register Page{% endblock title %}
-
-{% block content %}
+{% extends 'base.html' %} {% load crispy_forms_tags %} {% block title %}User
+Register Page{% endblock title %} {% block content %}
 <div class="container mt-5">
   <div class="row justify-content-center">
-    <div class="col-md-6">
+    <div class="col-md-8">
       <h1 class="text-center mb-4">Register</h1>
 
       <form action="" method="post">
         {% csrf_token %}
-        <div class="form-group">
-          {{ form|crispy }}
-        </div>
-        <button type="submit" class="btn btn-success btn-block">Register</button>
+        <div class="form-group">{{ form|crispy }}</div>
+        <button type="submit" class="btn btn-success btn-block">
+          Register
+        </button>
       </form>
 
-      <p class="text-center mt-3">Sudah punya akun? <a href="{% url 'base:user_login' %}">Login</a></p>
+      <p class="text-center mt-3">
+        Sudah punya akun? <a href="{% url 'base:user_login' %}">Login</a>
+      </p>
     </div>
   </div>
 </div>

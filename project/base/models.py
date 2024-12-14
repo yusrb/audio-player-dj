@@ -54,6 +54,7 @@ class Lagu(models.Model):
 
   audio_img = models.ImageField(upload_to="gambar_audio")
   audio_file = models.FileField(upload_to="file_audio")
+  lirik_file = models.FileField(upload_to="lirik", null=True, blank=True)
 
   album = models.ForeignKey(Album, on_delete=models.CASCADE)
   playlist = models.ManyToManyField(Playlist, blank=True)

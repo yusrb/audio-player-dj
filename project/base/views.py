@@ -6,6 +6,7 @@ from django.contrib.auth.views import LoginView, LogoutView
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 from django.urls import reverse_lazy
+from django.http import Http404
 from django.db.models import Q
 from .models import (
   ProfilArtis,
@@ -127,15 +128,48 @@ def daftar_lagu(request):
     return render(request, 'base/Lagu/daftar_lagu.html', context)
 
 @login_required
-def detail_lagu(request,pk):
-  get_lagu = Lagu.objects.get(pk=pk)
-  another_lagu = Lagu.objects.exclude(pk=get_lagu.pk).filter(genre=get_lagu.genre)
+def detail_lagu(request, pk):
+    # Ambil lagu berdasarkan primary key
+    get_lagu = Lagu.objects.get(pk=pk)
+    another_lagu = Lagu.objects.exclude(pk=get_lagu.pk).filter(genre=get_lagu.genre)
 
-  context = {
-    'lagu': get_lagu,
-    'another_lagus': another_lagu
-  }
-  return render(request, 'base/Lagu/detail_lagu.html', context)
+    # Inisialisasi variabel lirik
+    lirik = None
+
+    try:
+        lagu = Lagu.objects.get(id=get_lagu.id)
+
+        lirik = None
+        if lagu.lirik_file:
+            with open(lagu.lirik_file.path, 'r', encoding='utf-8') as file:
+                lirik = []
+                for line in file:
+                    if ']' in line:
+                        # Parse timestamp dan lirik
+                        timestamp = line.split(']')[0][1:]  # Ambil waktu tanpa tanda '[ ]'
+                        lyric_text = line.split(']')[1].strip()  # Ambil lirik setelah tanda ']'
+                        lirik.append({
+                            'timestamp': timestamp,
+                            'text': lyric_text
+                        })
+
+        return render(request, 'base/Lagu/detail_lagu.html', {
+            'lagu': lagu,
+            'lirik': lirik,
+            'another_lagus': another_lagu
+        })
+    except Lagu.DoesNotExist:
+        raise Http404("Lagu tidak ditemukan")
+
+
+    # Buat konteks untuk mengirim data ke template
+    context = {
+        'lagu': get_lagu,
+        'another_lagus': another_lagu,
+        'lirik': lirik,  # Kirim lirik ke template
+    }
+
+    return render(request, 'base/Lagu/detail_lagu.html', context)
 
 @login_required
 def tambah_lagu(request):

@@ -7,40 +7,38 @@
   <div class="row">
     {% include 'snippets/sidebar_left.html' %}
 
-    <div class="col-md-6">
+    <div class="col-md-8">
       <h1 class="text-center mb-4">Daftar Lagu</h1>
 
       <form action="" method="get" class="form-inline mb-4 justify-content-center">
         <div class="form-group">
           <input type="text" name="q" class="form-control mr-2" placeholder="Cari lagu..." value="{{ search_query }}">
-          <button type="submit" class="btn btn-primary">Cari</button>
         </div>
+        <button type="submit" class="btn btn-primary">Cari</button>
+        <input type="button" id="sudoBtn" class="btn btn-danger" style="margin-left: 240px;" value="Sudo Mode">
       </form>
 
       {% if lagus %}
-      <div class="row">
+      <div class="row justify-content-center">
         {% for lagu in lagus %}
-        <div class="col-md-4 mb-4">
-          <div class="card position-relative">
-            <img src="{{ lagu.audio_img.url }}" alt="{{ lagu.judul }}" class="card-img-top hover-darken">
-            <div class="card-overlay position-absolute top-0 right-0 p-2" style="display: none;">
-              <a href="{% url 'base:edit_lagu' lagu.pk %}" class="text-primary mr-2"><i class="fas fa-edit"></i></a>
-              <button class="text-danger delete-btn" data-url="{% url 'base:hapus_lagu' lagu.pk %}"><i
-                  class="fas fa-trash"></i></button>
+        <div class="col-md-4 col-lg-3 mb-4">
+          <a href="{% url 'base:detail_lagu' lagu.pk %}" class="text-decoration-none">
+            <div class="card position-relative shadow-sm border-0 rounded-lg">
+              <img src="{{ lagu.audio_img.url }}" alt="{{ lagu.judul }}" class="card-img-top">
+              <div class="card-overlay position-absolute top-0 right-0 p-2" style="display: none;">
+                <a href="{% url 'base:edit_lagu' lagu.pk %}" class="text-primary mr-2"><i class="fas fa-edit"></i></a>
+                <button class="text-danger delete-btn" data-url="{% url 'base:hapus_lagu' lagu.pk %}"><i class="fas fa-trash"></i></button>
+              </div>
+
+              <!-- Card Body -->
+              <div class="card-body d-flex flex-column justify-content-between" style="min-height: 200px;">
+                <h5 class="card-title text-center">{{ lagu.judul }}</h5>
+                <p class="card-text text-center">Artis: <a href="{% url 'base:profil_artis' lagu.artis.pk %}" class="text-decoration-none">{{ lagu.artis }}</a></p>
+                <p class="card-text text-center">Album: <a href="{% url 'base:detail_album' lagu.album.pk %}" class="text-decoration-none">{{ lagu.album }}</a></p>
+                <p class="card-text text-center">Genre: <a href="{% url 'base:detail_genre' lagu.genre.pk %}" class="text-decoration-none">{{ lagu.genre }}</a></p>
+              </div>
             </div>
-            <div class="card-body">
-              <h5 class="card-title">{{ lagu.judul }}</h5>
-              <p class="card-text">Artis: <a href="{% url 'base:profil_artis' lagu.artis.pk %}">{{ lagu.artis }}</a></p>
-              
-              <p class="card-text">Album: <a href="{% url 'base:detail_album' lagu.album.pk %}">
-                {{ lagu.album }}
-              </a></p>
-              <p class="card-text">Genre: <a href="{% url 'base:detail_genre' lagu.genre.pk %}">
-                {{ lagu.genre }}
-              </a></p>
-              <a href="{% url 'base:detail_lagu' lagu.pk %}" class="btn btn-primary">Lihat Detail</a>
-            </div>
-          </div>
+          </a>
         </div>
         {% endfor %}
       </div>
@@ -76,13 +74,13 @@
 
 <script>
   const cardImages = document.querySelectorAll('.card-img-top');
+  const cardOverlays = document.querySelectorAll('.card-overlay');
+  
   cardImages.forEach(image => {
     image.addEventListener('mouseover', function () {
-      this.classList.add('darken');
       this.nextElementSibling.style.display = 'block';
     });
     image.addEventListener('mouseout', function () {
-      this.classList.remove('darken');
       this.nextElementSibling.style.display = 'none';
     });
   });
@@ -97,19 +95,83 @@
       new bootstrap.Modal(document.getElementById('deleteModal')).show();
     });
   });
+
+  const sudoBtn = document.getElementById('sudoBtn');
+  let sudoMode = false;
+
+  sudoBtn.addEventListener('click', function () {
+    sudoMode = !sudoMode;
+
+    cardOverlays.forEach(overlay => {
+      if (sudoMode) {
+        overlay.style.display = 'block';
+      } else {
+        overlay.style.display = 'none';
+      }
+    });
+
+    if (sudoMode) {
+      sudoBtn.textContent = 'Nonaktifkan Sudo Mode';
+      sudoBtn.classList.remove('btn-danger');
+      sudoBtn.classList.add('btn-secondary');
+    } else {
+      sudoBtn.textContent = 'Sudo Mode';
+      sudoBtn.classList.remove('btn-secondary');
+      sudoBtn.classList.add('btn-danger');
+    }
+  });
 </script>
 
 <style>
-  .hover-darken {
-    transition: filter 0.3s ease;
+  .card {
+    max-width: 300px;
+    margin: auto;
+    transition: transform 0.3s, box-shadow 0.3s;
+    position: relative;
   }
 
-  .hover-darken.darken {
-    filter: brightness(0.7);
+  .card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.2);
+  }
+
+  .card-title {
+    font-size: 1.1rem;
+    font-weight: bold;
+  }
+
+  .card-img-top {
+    height: 200px;
+    object-fit: cover;
+    transition: opacity 0.3s ease;
+  }
+
+  .card-img-top:hover {
+    opacity: 1;
   }
 
   .card-overlay {
     display: none;
+    background: rgba(0, 0, 0, 0.5);
+    color: white;
+    position: absolute;
+    top: 0;
+    right: 0;
+    padding: 10px;
+    border-radius: 5px;
+  }
+
+  .delete-btn, .fa-edit {
+    cursor: pointer;
+    color: white;
+  }
+
+  .delete-btn:hover, .fa-edit:hover {
+    color: red;
+  }
+
+  .text-center {
+    text-align: center;
   }
 </style>
 {% endblock content %}

@@ -6,45 +6,172 @@ Play {{ lagu.judul }}
 
 {% block content %}
 <div class="container mt-4">
-  <a href="{% url 'base:daftar_lagu' %}" class="btn btn-secondary mb-4">Kembali</a>
+  <a href="javascript:history.back()">Kembali</a>
 
   <div class="row">
-    <div class="col-md-4">
-      <img src="{{ lagu.audio_img.url }}" alt="{{ lagu.judul }}" class="img-fluid mb-3">
-      <audio controls class="w-100">
-        <source src="{{ lagu.audio_file.url }}" type="audio/mp3">
-        Browser anda tidak support audio
-      </audio>
+    <div class="col-md-4 mb-4">
+      <div class="card border-0 shadow-sm rounded-lg">
+        <img id="audio-img" src="{{ lagu.audio_img.url }}" alt="{{ lagu.judul }}" class="img-fluid rounded-top" style="cursor: pointer;">
+        <audio id="audio-player" controls autoplay volume class="w-100 mt-3 mb-2 rounded" style="border: 1px solid #ddd; border-radius: 8px;">
+          <source src="{{ lagu.audio_file.url }}" type="audio/mp3">
+          Browser Anda tidak mendukung audio.
+        </audio>
+      </div>
     </div>
 
-    <!-- Detail Lagu -->
     <div class="col-md-8">
-      <h1>{{ lagu.judul }}</h1>
-      <p><strong>Artis:</strong> <a href="{% url 'base:profil_artis' lagu.artis.pk %}">{{ lagu.artis }}</a></p>
-      <p><strong>Album:</strong> <a href="{% url 'base:detail_album' lagu.album.pk %}">{{ lagu.album }}</a></p>
-      <p><strong>Genre:</strong> <a href="{% url 'base:detail_genre' lagu.genre.pk %}">{{ lagu.genre }}</a></p>
+      <h1 class="display-4">{{ lagu.judul }}</h1>
+      <p><strong>Artis:</strong> <a href="{% url 'base:profil_artis' lagu.artis.pk %}" class="text-decoration-none">{{ lagu.artis }}</a></p>
+      <p><strong>Album:</strong> <a href="{% url 'base:detail_album' lagu.album.pk %}" class="text-decoration-none">{{ lagu.album }}</a></p>
+      <p><strong>Genre:</strong> <a href="{% url 'base:detail_genre' lagu.genre.pk %}" class="text-decoration-none">{{ lagu.genre }}</a></p>
+      
+      <hr>
+
+      <h3>Lirik Lagu</h3>
+      <div id="lyrics-container">
+        {% for line in lirik %}
+          <p class="lyric-line" data-timestamp="{{ line.timestamp }}" style="display: none;">{{ line.text }}</p>
+        {% endfor %}
+      </div>
     </div>
   </div>
 
   <hr>
 
-  <h3>Rekomendasi Lagu Lainnya</h3>
+  <h3 class="mt-5 text-center">Rekomendasi Lagu Lainnya</h3>
   <div class="row">
     {% for another in another_lagus %}
     <div class="col-md-4 mb-4">
-      <div class="card">
+      <div class="icard shadow-sm border-0 rounded-lg">
         <a href="{% url 'base:detail_lagu' another.pk %}">
-        <img src="{{ another.audio_img.url }}" alt="{{ another.judul }}" class="card-img-top">
-        <div class="card-body">
-          <h5 class="card-title">{{ another.judul }}</h5>
-          <p class="card-text"><span style="color:black">Artis:</span> <a href="#">{{ another.artis }}</a></p>
-            <p class="card-text">Album: <a href="{% url 'base:detail_album' another.album.pk %}">{{ another.album }}</a></p>
-            <p class="card-text">Genre: <a href="{% url 'base:detail_genre' another.genre.pk %}">{{ another.genre }}</a></p>
+          <img src="{{ another.audio_img.url }}" alt="{{ another.judul }}" class="card-img-top rounded-top equal-height-img">
+          <div class="card-body">
+            <h5 class="card-title">{{ another.judul }}</h5>
+            <p class="card-text"><strong>Artis:</strong> <a href="#" class="text-decoration-none">{{ another.artis }}</a></p>
+            <p class="card-text"><strong>Album:</strong> <a href="{% url 'base:detail_album' another.album.pk %}" class="text-decoration-none">{{ another.album }}</a></p>
+            <p class="card-text"><strong>Genre:</strong> <a href="{% url 'base:detail_genre' another.genre.pk %}" class="text-decoration-none">{{ another.genre }}</a></p>
           </div>
-        </div>
+        </a>
       </div>
-    </a>
+    </div>
     {% endfor %}
   </div>
+
 </div>
+
+<style>
+  .icard {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+  }
+
+  .equal-height-img {
+    width: 100%;
+    height: 300px;
+    object-fit: cover;
+  }
+
+  .card-body {
+    flex-grow: 1;
+  }
+
+  .card-title {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: #333;
+  }
+
+  .card-body {
+    font-size: 0.9rem;
+    color: #555;
+  }
+
+  .icard:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    transform: translateY(-4px);
+  }
+
+  .display-4 {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: #333;
+  }
+
+  h3 {
+    font-size: 1.8rem;
+    font-weight: 600;
+    color: #333;
+  }
+
+  pre {
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    font-family: 'Courier New', monospace;
+    font-size: 1rem;
+    color: #555;
+  }
+
+  a {
+    color: #007bff;
+    text-decoration: none;
+  }
+
+  a:hover {
+    text-decoration: underline;
+  }
+
+  .lyric-line.active {
+    color: #007bff;
+  }
+</style>
+
+<script>
+  const audioImg = document.getElementById('audio-img');
+  const audioPlayer = document.getElementById('audio-player');
+  const lyricLines = document.querySelectorAll('.lyric-line');
+  let currentIndex = 0;
+  const linesPerBatch = 5;
+  const lyricTimestampMap = [...lyricLines].map(line => {
+    const timestamp = line.getAttribute('data-timestamp');
+    const [minutes, seconds] = timestamp.split(':').map(Number);
+    return { line, timestamp, time: minutes * 60 + seconds };
+  });
+
+  audioImg.addEventListener('click', function () {
+    if (audioPlayer.paused) {
+      audioPlayer.play();
+    } else {
+      audioPlayer.pause();
+    }
+  });
+
+  audioPlayer.ontimeupdate = function () {
+    const currentTime = audioPlayer.currentTime;
+
+    lyricLines.forEach(function (line) {
+      line.style.display = 'none';
+    });
+
+    let displayedCount = 0;
+    for (let i = currentIndex; i < lyricTimestampMap.length && displayedCount < linesPerBatch; i++) {
+      const { line, time } = lyricTimestampMap[i];
+      if (time <= currentTime) {
+        line.style.display = 'block';
+        displayedCount++;
+      }
+    }
+
+    if (displayedCount >= linesPerBatch) {
+      const lastDisplayedLine = lyricTimestampMap[currentIndex + linesPerBatch - 1];
+      if (currentTime >= lastDisplayedLine.time + 2.7) {
+        currentIndex += linesPerBatch;
+        if (currentIndex >= lyricTimestampMap.length) {
+          currentIndex = 0;
+        }
+      }
+    }
+  };
+</script>
+
 {% endblock content %}

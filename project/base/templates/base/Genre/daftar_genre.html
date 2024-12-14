@@ -7,32 +7,32 @@
   <div class="row">
     {% include 'snippets/sidebar_left.html' %}
 
-    <div class="col-md-6">
+    <div class="col-md-8">
       <h1 class="text-center mb-4">Daftar Genre</h1>
 
       <form action="" method="get" class="form-inline mb-4 justify-content-center">
         <div class="form-group">
-          <input type="text" name="q" class="form-control mr-2" placeholder="Cari genre..." value="{{ search_query }}">
-          <button type="submit" class="btn btn-primary">Cari</button>
+          <input type="text" name="q" class="form-control mr-2" placeholder="Cari lagu..." value="{{ search_query }}">
         </div>
+        <button type="submit" class="btn btn-primary">Cari</button>
+        <input type="button" id="sudoBtn" class="btn btn-danger" style="margin-left: 240px;" value="Sudo Mode">
       </form>
 
       {% if genres %}
         <div class="row">
           {% for genre in genres %}
-          <div class="col-md-4 mb-4">
+          <div class="col-md-3 mb-4">
             <div class="genre-card position-relative">
               <a href="{% url 'base:detail_genre' genre.pk %}" class="card-link">
                 <div class="card h-100">
                   <div class="card-body text-center">
-                    <p class="card-title">{{ genre.nama }}</p>
+                    <p class="card-title text-dark">{{ genre.nama }}</p>
                   </div>
                 </div>
               </a>
 
-              <div class="card-overlay" style="position: absolute; top: 44px;">
-                <a href="{% url 'base:edit_genre' genre.pk %}" class="text-primary mr-2"><i class="fas fa-edit"></i></a>
-                <!-- Form hapus genre -->
+              <div class="card-overlay">
+                <a href="{% url 'base:edit_genre' genre.pk %}" class="text-info mr-2"><i class="fas fa-edit"></i></a>
                 <form action="{% url 'base:hapus_genre' genre.pk %}" method="POST" style="display:inline;">
                   {% csrf_token %}
                   <button type="submit" class="text-danger bg-transparent border-0 delete-btn"><i class="fas fa-trash"></i></button>
@@ -51,60 +51,103 @@
   </div>
 </div>
 
+<script>
+  const sudoBtn = document.getElementById('sudoBtn');
+  const cardOverlays = document.querySelectorAll('.card-overlay');
+  let sudoMode = false;
+
+  sudoBtn.addEventListener('click', function () {
+    sudoMode = !sudoMode;
+
+    // Menampilkan atau menyembunyikan card overlay (Edit & Hapus)
+    cardOverlays.forEach(overlay => {
+      if (sudoMode) {
+        overlay.style.display = 'block';  // Menampilkan overlay
+      } else {
+        overlay.style.display = 'none';  // Menyembunyikan overlay
+      }
+    });
+
+    // Mengubah status tombol Sudo Mode
+    if (sudoMode) {
+      sudoBtn.value = 'Sudo Mode';
+      sudoBtn.classList.remove('btn-danger');
+      sudoBtn.classList.add('btn-secondary');
+    } else {
+      sudoBtn.value = 'Sudo Mode';
+      sudoBtn.classList.remove('btn-secondary');
+      sudoBtn.classList.add('btn-danger');
+    }
+  });
+</script>
+
 <style>
-  .genre-card {
-    display: block;
-    text-decoration: none;
+  /* Menata tombol pencarian dan sudo mode agar sejajar */
+  .form-inline .form-group {
+    display: inline-block;
+  }
+
+  /* Menambahkan margin antara tombol pencarian dan sudo mode */
+  .ml-4 {
+    margin-left: 16px;
+  }
+
+  /* Desain card genre */
+  .card {
+    max-width: 300px;
+    margin: auto;
+    transition: transform 0.3s, box-shadow 0.3s;
     position: relative;
   }
 
-  .genre-card .card {
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-  }
-
-  .genre-card:hover .card {
+  .card:hover {
     transform: translateY(-5px);
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.2);
   }
 
-  .genre-card .card-body {
-    padding: 20px;
-    background-color: #f9f9f9;
-  }
-
-  .genre-card .card-title {
-    font-size: 18px;
+  .card-title {
+    font-size: 1.1rem;
     font-weight: bold;
-    color: #333;
   }
 
-  .genre-card .card-body:hover {
-    background-color: #f1f1f1;
+  .card-img-top {
+    height: 200px;
+    object-fit: cover;
+    transition: opacity 0.3s ease;
+  }
+
+  .card-img-top:hover {
+    opacity: 0.7;
   }
 
   .card-overlay {
     display: none;
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    z-index: 10;
-  }
-
-  .genre-card:hover .card-overlay {
-    display: block;
-  }
-
-  .card-overlay a {
-    font-size: 20px;
+    background: rgba(0, 0, 0, 0.5);
     color: white;
-    margin-left: 10px;
-    transition: color 0.3s ease;
+    position: absolute;
+    top: 0;
+    right: 0;
+    padding: 10px;
+    border-radius: 5px;
   }
 
-  .card-overlay a:hover {
-    color: #f0ad4e;
+  .delete-btn, .fa-edit {
+    cursor: pointer;
+    color: white;
+  }
+
+  .delete-btn:hover, .fa-edit:hover {
+    color: red;
+  }
+
+  .text-center {
+    text-align: center;
+  }
+
+  /* Mengatur tampilan button Sudo Mode */
+  .btn-secondary {
+    background-color: #6c757d;
+    border-color: #6c757d;
   }
 </style>
 

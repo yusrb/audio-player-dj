@@ -1,9 +1,24 @@
-<div class="col-md-3">
-  <div class="list-group">
-    <a href="{% url 'base:daftar_lagu' %}" class="list-group-item list-group-item-action">Daftar Lagu</a>
-    <a href="{% url 'base:daftar_artis' %}" class="list-group-item list-group-item-action">Daftar Artis</a>
-    <a href="{% url 'base:daftar_album' %}" class="list-group-item list-group-item-action">Album</a>
-    <a href="{% url 'base:daftar_genre' %}" class="list-group-item list-group-item-action">Genre</a>
-    <a href="{% url 'base:daftar_playlist' %}" class="list-group-item list-group-item-action">Playlist</a>
+<div class="col-md-2">
+  <div class="card shadow-sm">
+    <div class="card-body">
+      <h5 class="card-title text-center mb-4">Navigasi</h5>
+      <div class="list-group">
+        <a href="{% url 'base:daftar_lagu' %}" class="list-group-item list-group-item-action d-flex align-items-center">
+          <i class="fas fa-music mr-3"></i> Daftar Lagu
+        </a>
+        <a href="{% url 'base:daftar_artis' %}" class="list-group-item list-group-item-action d-flex align-items-center">
+          <i class="fas fa-user mr-3"></i> Daftar Artis
+        </a>
+        <a href="{% url 'base:daftar_album' %}" class="list-group-item list-group-item-action d-flex align-items-center">
+          <i class="fas fa-compact-disc mr-3"></i> Album
+        </a>
+        <a href="{% url 'base:daftar_genre' %}" class="list-group-item list-group-item-action d-flex align-items-center">
+          <i class="fas fa-tags mr-3"></i> Genre
+        </a>
+        <a href="{% url 'base:daftar_playlist' %}" class="list-group-item list-group-item-action d-flex align-items-center">
+          <i class="fas fa-playlist mr-3"></i> Playlist
+        </a>
+      </div>
+    </div>
   </div>
 </div>

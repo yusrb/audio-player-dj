@@ -45,20 +45,3 @@ def delete_album_files(sender, instance, **kwargs):
         old_image_path = instance.album_img.path
         if os.path.isfile(old_image_path):
             os.remove(old_image_path)
-
-@receiver(pre_save, sender=Genre)
-def delete_old_genre_files(sender, instance, **kwargs):
-    if instance.pk:
-        old_instance = Genre.objects.get(pk=instance.pk)
-        if 'image' in instance.__dict__ and instance.image != old_instance.image:
-            if old_instance.image:
-                old_image_path = old_instance.image.path
-                if os.path.isfile(old_image_path):
-                    os.remove(old_image_path)
-
-@receiver(post_delete, sender=Genre)
-def delete_genre_files(sender, instance, **kwargs):
-    if instance.image:
-        old_image_path = instance.image.path
-        if os.path.isfile(old_image_path):
-            os.remove(old_image_path)

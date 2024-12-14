@@ -7,24 +7,24 @@
   <div class="row">
     {% include 'snippets/sidebar_left.html' %}
 
-    <div class="col-md-6">
+    <div class="col-md-8">
       <h1 class="text-center mb-4">Daftar Album</h1>
 
       <form action="" method="get" class="form-inline mb-4 justify-content-center">
         <div class="form-group">
-          <input type="text" name="q" class="form-control mr-2" placeholder="Cari album..." value="{{ search_query }}">
-          <button type="submit" class="btn btn-primary">Cari</button>
+          <input type="text" name="q" class="form-control mr-2" placeholder="Cari lagu..." value="{{ search_query }}">
         </div>
+        <button type="submit" class="btn btn-primary">Cari</button>
+        <input type="button" id="sudoBtn" class="btn btn-danger" style="margin-left: 240px;" value="Sudo Mode">
       </form>
 
       {% if albums %}
         <div class="row">
           {% for album in albums %}
+          <a href="{% url 'base:detail_album' album.pk %}">
             <div class="col-md-4 mb-4">
               <div class="card position-relative">
-                <a href="{% url 'base:detail_album' album.pk %}">
                   <img src="{{ album.album_img.url }}" alt="{{ album.nama }}" class="card-img-top hover-darken" style="height: 200px; object-fit: cover;">
-                </a>
                 <div class="card-overlay position-absolute top-0 right-0 p-2" style="display: none;">
                   <a href="{% url 'base:edit_album' album.pk %}" class="text-primary mr-2"><i class="fas fa-edit"></i></a>
                   <a href="#" class="text-danger delete-btn" data-url="{% url 'base:hapus_album' album.pk %}"><i class="fas fa-trash"></i></a>
@@ -32,10 +32,10 @@
                 <div class="card-body">
                   <h5 class="card-title">{{ album.nama }}</h5>
                   <p class="card-text">Artis: {{ album.artis }}</p>
-                  <a href="{% url 'base:detail_album' album.pk %}" class="btn btn-primary">Lihat Detail</a>
                 </div>
               </div>
             </div>
+          </a>
           {% endfor %}
         </div>
       {% else %}
@@ -68,68 +68,104 @@
 
 <script>
   const cardImages = document.querySelectorAll('.card-img-top');
+  const cardOverlays = document.querySelectorAll('.card-overlay');
+  
   cardImages.forEach(image => {
-    image.addEventListener('mouseover', function() {
-      this.classList.add('darken');
+    image.addEventListener('mouseover', function () {
       this.nextElementSibling.style.display = 'block';
     });
-    image.addEventListener('mouseout', function() {
-      this.classList.remove('darken');
+    image.addEventListener('mouseout', function () {
       this.nextElementSibling.style.display = 'none';
     });
   });
 
   const deleteButtons = document.querySelectorAll('.delete-btn');
   deleteButtons.forEach(button => {
-    button.addEventListener('click', function(e) {
+    button.addEventListener('click', function (e) {
       e.preventDefault();
       const url = this.getAttribute('data-url');
-      document.getElementById('confirmDelete').setAttribute('href', url);
+      const form = document.getElementById('deleteForm');
+      form.setAttribute('action', url);
       new bootstrap.Modal(document.getElementById('deleteModal')).show();
     });
+  });
+
+  const sudoBtn = document.getElementById('sudoBtn');
+  let sudoMode = false;
+
+  sudoBtn.addEventListener('click', function () {
+    sudoMode = !sudoMode;
+
+    cardOverlays.forEach(overlay => {
+      if (sudoMode) {
+        overlay.style.display = 'block';
+      } else {
+        overlay.style.display = 'none';
+      }
+    });
+
+    if (sudoMode) {
+      sudoBtn.textContent = 'Nonaktifkan Sudo Mode';
+      sudoBtn.classList.remove('btn-danger');
+      sudoBtn.classList.add('btn-secondary');
+    } else {
+      sudoBtn.textContent = 'Sudo Mode';
+      sudoBtn.classList.remove('btn-secondary');
+      sudoBtn.classList.add('btn-danger');
+    }
   });
 </script>
 
 <style>
-  .hover-darken {
-    transition: filter 0.3s ease;
+  .card {
+    max-width: 300px;
+    margin: auto;
+    transition: transform 0.3s, box-shadow 0.3s;
+    position: relative;
   }
 
-  .hover-darken.darken {
-    filter: brightness(0.5);
+  .card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0px 4px 1px rgba(0, 0, 0, 0.2);
+  }
+
+  .card-title {
+    font-size: 1.1rem;
+    font-weight: bold;
+  }
+
+  .card-img-top {
+    height: 200px;
+    object-fit: cover;
+    transition: opacity 0.3s ease;
+  }
+
+  .card-img-top:hover {
+    opacity: 1;
   }
 
   .card-overlay {
     display: none;
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
     background: rgba(0, 0, 0, 0.5);
     color: white;
-    display: flex;
-    justify-content: flex-end;
-    align-items: flex-start;
+    position: absolute;
+    top: 0;
+    right: 0;
     padding: 10px;
-    z-index: 10;
-    opacity: 0;
-    transition: opacity 0.3s ease;
+    border-radius: 5px;
   }
 
-  .card-overlay a {
-    font-size: 20px;
+  .delete-btn, .fa-edit {
+    cursor: pointer;
     color: white;
-    transition: color 0.3s ease;
-    margin-left: 10px;
   }
 
-  .card-overlay a:hover {
-    color: #f0ad4e;
+  .delete-btn:hover, .fa-edit:hover {
+    color: red;
   }
 
-  .card-overlay.show {
-    opacity: 1;
+  .text-center {
+    text-align: center;
   }
 </style>
 {% endblock content %}

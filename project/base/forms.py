@@ -15,7 +15,7 @@ class ArtisProfilForm(forms.ModelForm):
 class LaguForm(forms.ModelForm):
   class Meta:
     model = Lagu
-    fields = ('judul','artis','album','genre','audio_img','audio_file',)
+    fields = ('judul','artis','album','genre','audio_img','audio_file','lirik_file')
 
 class GenreForm(forms.ModelForm):
   class Meta:

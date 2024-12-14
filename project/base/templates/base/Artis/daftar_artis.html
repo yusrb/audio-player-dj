@@ -7,35 +7,31 @@
   <div class="row">
     {% include 'snippets/sidebar_left.html' %}
 
-    <div class="col-md-6">
+    <div class="col-md-8">
       <h1 class="text-center mb-4">Daftar Artis</h1>
 
       <form action="" method="get" class="form-inline mb-4 justify-content-center">
         <div class="form-group">
-          <input type="text" name="q" class="form-control mr-2" placeholder="Cari artis..." value="{{ search_query }}">
-          <button type="submit" class="btn btn-primary">Cari</button>
+          <input type="text" name="q" class="form-control mr-2" placeholder="Cari lagu..." value="{{ search_query }}">
         </div>
+        <button type="submit" class="btn btn-primary">Cari</button>
+        <input type="button" id="sudoBtn" class="btn btn-danger" style="margin-left: 240px;" value="Sudo Mode">
       </form>
 
       {% if artists %}
         <div class="row">
           {% for artist in artists %}
           <div class="col-md-4 mb-4">
-            <div class="artist-card position-relative">
+            <div class="artist-card text-center">
               <a href="{% url 'base:profil_artis' artist.pk %}" class="card-link">
-                <div class="card h-100">
-                  <div class="card-body text-center">
-                    <div class="artist-image">
-                      <img src="{{ artist.sampul_foto.url }}" alt="{{ artist.nama }}" class="rounded-circle" style="width: 100px; height: 100px; object-fit: cover;">
-                    </div>
-                    <p class="card-title mt-3">{{ artist.nama }}</p>
-                  </div>
+                <div class="artist-image mb-3">
+                  <img src="{{ artist.sampul_foto.url }}" alt="{{ artist.nama }}" class="rounded-circle" style="width: 120px; height: 120px; object-fit: cover;">
                 </div>
+                <p style="color:black">{{ artist.nama }}</p>
               </a>
 
-              <div class="card-overlay" style="position: absolute; top: 44px;">
+              <div class="card-overlay">
                 <a href="{% url 'base:edit_artis' artist.pk %}" class="text-primary mr-2"><i class="fas fa-edit"></i></a>
-                <!-- Form hapus artis -->
                 <form action="{% url 'base:hapus_artis' artist.pk %}" method="POST" style="display:inline;">
                   {% csrf_token %}
                   <button type="submit" class="text-danger bg-transparent border-0 delete-btn"><i class="fas fa-trash"></i></button>
@@ -54,67 +50,106 @@
   </div>
 </div>
 
+<script>
+  const cardImages = document.querySelectorAll('.card-img-top');
+  const cardOverlays = document.querySelectorAll('.card-overlay');
+  
+  cardImages.forEach(image => {
+    image.addEventListener('mouseover', function () {
+      this.nextElementSibling.style.display = 'block';
+    });
+    image.addEventListener('mouseout', function () {
+      this.nextElementSibling.style.display = 'none';
+    });
+  });
+
+  const deleteButtons = document.querySelectorAll('.delete-btn');
+  deleteButtons.forEach(button => {
+    button.addEventListener('click', function (e) {
+      e.preventDefault();
+      const url = this.getAttribute('data-url');
+      const form = document.getElementById('deleteForm');
+      form.setAttribute('action', url);
+      new bootstrap.Modal(document.getElementById('deleteModal')).show();
+    });
+  });
+
+  const sudoBtn = document.getElementById('sudoBtn');
+  let sudoMode = false;
+
+  sudoBtn.addEventListener('click', function () {
+    sudoMode = !sudoMode;
+
+    cardOverlays.forEach(overlay => {
+      if (sudoMode) {
+        overlay.style.display = 'block';
+      } else {
+        overlay.style.display = 'none';
+      }
+    });
+
+    if (sudoMode) {
+      sudoBtn.textContent = 'Nonaktifkan Sudo Mode';
+      sudoBtn.classList.remove('btn-danger');
+      sudoBtn.classList.add('btn-secondary');
+    } else {
+      sudoBtn.textContent = 'Sudo Mode';
+      sudoBtn.classList.remove('btn-secondary');
+      sudoBtn.classList.add('btn-danger');
+    }
+  });
+</script>
+
 <style>
-  .artist-card {
-    display: block;
-    text-decoration: none;
+  .card {
+    max-width: 300px;
+    margin: auto;
+    transition: transform 0.3s, box-shadow 0.3s;
     position: relative;
   }
 
-  .artist-card .card {
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-  }
-
-  .artist-card:hover .card {
+  .card:hover {
     transform: translateY(-5px);
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.2);
   }
 
-  .artist-card .card-body {
-    padding: 20px;
-    background-color: #f9f9f9;
-  }
-
-  .artist-card .card-title {
-    font-size: 18px;
+  .card-title {
+    font-size: 1.1rem;
     font-weight: bold;
-    color: #333;
   }
 
-  .artist-card .card-body:hover {
-    background-color: #f1f1f1;
+  .card-img-top {
+    height: 200px;
+    object-fit: cover;
+    transition: opacity 0.3s ease;
   }
 
-  .artist-image {
-    width: 100px;
-    height: 100px;
-    margin: 0 auto;
+  .card-img-top:hover {
+    opacity: 0.7;
   }
 
   .card-overlay {
     display: none;
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    z-index: 10;
-  }
-
-  .artist-card:hover .card-overlay {
-    display: block;
-  }
-
-  .card-overlay a {
-    font-size: 20px;
+    background: rgba(0, 0, 0, 0.5);
     color: white;
-    margin-left: 10px;
-    transition: color 0.3s ease;
+    position: absolute;
+    top: 0;
+    right: 0;
+    padding: 10px;
+    border-radius: 5px;
   }
 
-  .card-overlay a:hover {
-    color: #f0ad4e;
+  .delete-btn, .fa-edit {
+    cursor: pointer;
+    color: white;
+  }
+
+  .delete-btn:hover, .fa-edit:hover {
+    color: red;
+  }
+
+  .text-center {
+    text-align: center;
   }
 </style>
-
 {% endblock content %}
