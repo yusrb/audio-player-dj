@@ -4,7 +4,6 @@ from django.contrib.auth.models import User
 class ProfilArtis(models.Model):
   nama = models.CharField(max_length=100)
   sampul_foto = models.ImageField(upload_to="sampul_foto")
-
   class Meta:
     verbose_name = "Profil Artis"
     verbose_name_plural = "Profil Artis"

@@ -1,4 +1,5 @@
 import os
+import random
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from django.views.generic import CreateView
@@ -8,6 +9,7 @@ from django.contrib.auth.models import User
 from django.urls import reverse_lazy
 from django.http import Http404
 from django.db.models import Q
+from django.core.paginator import Paginator
 from .models import (
   ProfilArtis,
   Lagu,
@@ -48,20 +50,27 @@ class UserLogoutView(LogoutView):
 
 @login_required
 def daftar_artis(request):
-  all_artis = ProfilArtis.objects.all()
+    all_artis = ProfilArtis.objects.all()
 
-  search_query = request.GET.get('q')
+    search_query = request.GET.get('q')
 
-  if search_query:
-    all_artis = all_artis.filter(
-      Q(nama__icontains=search_query),
-    )
+    if search_query:
+        all_artis = all_artis.filter(Q(nama__icontains=search_query))
 
-  context = {
-    'artists': all_artis,
-  }
+    paginator = Paginator(all_artis, 10)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
 
-  return render(request, 'base/Artis/daftar_artis.html', context)
+    if not search_query:
+        all_artis = random.sample(list(page_obj.object_list), min(len(page_obj.object_list), 10))
+        page_obj.object_list = all_artis
+
+    context = {
+        'artists': page_obj.object_list,
+        'page_obj': page_obj,
+    }
+
+    return render(request, 'base/Artis/daftar_artis.html', context)
 
 @login_required
 def profil_artis(request, pk):
@@ -122,25 +131,35 @@ def hapus_artis(request, pk):
 
 @login_required
 def daftar_lagu(request):
-    get_lagu = Lagu.objects.all()
-    search_query = request.GET.get('q', '')
+    all_lagu = Lagu.objects.all()
+    search_query = request.GET.get('q')
+
     if search_query:
-        get_lagu = get_lagu.filter(
-            Q(judul__icontains=search_query)
-        )
+        all_lagu = all_lagu.filter(Q(judul__icontains=search_query))
+
+    paginator = Paginator(all_lagu, 10)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+
+    if not search_query:
+        all_lagu = random.sample(list(page_obj.object_list), min(len(page_obj.object_list), 10))
+        page_obj.object_list = all_lagu
+
     context = {
-        'lagus': get_lagu,
-        'search_query': search_query
+        'lagus': page_obj.object_list,
+        'page_obj': page_obj,
+        'search_query': search_query,
     }
+
     return render(request, 'base/Lagu/daftar_lagu.html', context)
 
 @login_required
 def detail_lagu(request, pk):
-    # Ambil lagu berdasarkan primary key
     get_lagu = Lagu.objects.get(pk=pk)
     another_lagu = Lagu.objects.exclude(pk=get_lagu.pk).filter(genre=get_lagu.genre)
 
-    # Inisialisasi variabel lirik
+    another_lagu = random.sample(list(another_lagu), min(len(another_lagu), 20))
+
     lirik = None
 
     try:
@@ -152,9 +171,9 @@ def detail_lagu(request, pk):
                 lirik = []
                 for line in file:
                     if ']' in line:
-                        # Parse timestamp dan lirik
-                        timestamp = line.split(']')[0][1:]  # Ambil waktu tanpa tanda '[ ]'
-                        lyric_text = line.split(']')[1].strip()  # Ambil lirik setelah tanda ']'
+
+                        timestamp = line.split(']')[0][1:]
+                        lyric_text = line.split(']')[1].strip()
                         lirik.append({
                             'timestamp': timestamp,
                             'text': lyric_text
@@ -168,12 +187,10 @@ def detail_lagu(request, pk):
     except Lagu.DoesNotExist:
         raise Http404("Lagu tidak ditemukan")
 
-
-    # Buat konteks untuk mengirim data ke template
     context = {
         'lagu': get_lagu,
         'another_lagus': another_lagu,
-        'lirik': lirik,  # Kirim lirik ke template
+        'lirik': lirik,
     }
 
     return render(request, 'base/Lagu/detail_lagu.html', context)
@@ -237,6 +254,8 @@ def daftar_album(request):
           Q(nama__icontains=search_query) |
           Q(artis__icontains=search_query)
       )
+  else :
+    get_album = random.sample(list(get_album), min(len(get_album), 10))
 
   context = {
     'albums': get_album,
@@ -309,6 +328,9 @@ def daftar_genre(request):
     all_genre = all_genre.filter(
       Q(nama__icontains=search_query)
     )
+  
+  else:
+    all_genre = random.sample(list(all_genre), min(len(all_genre), 30))
 
   context = {
     'genres': all_genre
@@ -320,6 +342,8 @@ def daftar_genre(request):
 def detail_genre(request, pk):
   get_genre = Genre.objects.get(pk=pk)
   all_lagu_with_genre = get_genre.lagu_set.all()
+
+  all_lagu_with_genre = random.sample(list(all_lagu_with_genre), min(len(all_lagu_with_genre), 15))
 
   search_query = request.GET.get('q')
 
