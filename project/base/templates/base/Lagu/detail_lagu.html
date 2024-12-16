@@ -9,14 +9,68 @@ Play {{ lagu.judul }}
   <a href="{% url 'base:daftar_lagu' %}" class="btn btn-primary mb-4">Home</a>
   <a href="javascript:history.back()" class="btn btn-primary mb-4">Kembali</a>
 
+  <!-- Modal -->
+  <div class="modal fade" id="song-modal" tabindex="-1" aria-labelledby="songModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="songModalLabel">Pilih Lagu</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <select id="song-select" class="form-select">
+            {% for lagu in another_lagus %}
+              <option value="{{ lagu.id }}">{{ lagu.judul }}</option>
+            {% endfor %}
+          </select>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
+          <button type="button" class="btn btn-primary" id="play-song-btn">Putar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <div class="row">
-    <div class="col-md-4" style="margin-bottom: 100px">
+    <div class="col-md-4" style="margin-bottom: 20px">
       <div class="card border-0 shadow-sm rounded-lg">
-        <img id="audio-img" src="{{ lagu.audio_img.url }}" alt="{{ lagu.judul }}" class="img-fluid rounded-top" style="cursor: pointer;">
-        <audio id="audio-player" controls autoplay volume class="w-100 mt-3 mb-2 rounded" style="border: 1px solid #ddd; border-radius: 8px;">
+        <img id="audio-img" src="{{ lagu.audio_img.url }}" alt="{{ lagu.judul }}" class="img-fluid rounded-top cursor-pointer">
+        <audio id="audio-player" controls autoplay volume class="w-full mt-3 mb-2 rounded border border-gray-300">
           <source src="{{ lagu.audio_file.url }}" type="audio/mp3">
           Browser Anda tidak mendukung audio.
         </audio>
+        <div class="d-flex justify-content-between align-items-center" style="margin-right: 7px; margin-left:7px;margin-bottom:1px;">
+          <button id="prev-song" class="btn" style="background: linear-gradient(45deg, #ff6ec7, #ff7c7c); border: none; color: white; opacity: {% if previous_lagu is None %}0.5{% else %}1{% endif %}; cursor: {% if previous_lagu is None %}not-allowed{% else %}pointer{% endif %};">
+            ←
+          </button>
+
+          <div class="flex-fill position-relative" style="height: 50px; position: relative; bottom:2px;">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 50" class="w-100 h-100 opacity-30">
+              <path d="M10,30 C30,5 50,5 70,30 S110,55 130,30 S170,5 190,30" stroke="url(#grad1)" stroke-width="2" fill="none"/>
+              <path d="M20,25 C40,15 60,15 80,25 S120,35 140,25 S160,15 180,25" stroke="url(#grad2)" stroke-width="2" fill="none"/>
+              <path d="M30,20 C50,10 70,10 90,20 S130,30 150,20 S170,10 190,20" stroke="url(#grad3)" stroke-width="2" fill="none"/>
+              <defs>
+                <linearGradient id="grad1" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" style="stop-color:rgb(0,255,255);stop-opacity:1" />
+                  <stop offset="100%" style="stop-color:rgb(255,0,255);stop-opacity:1" />
+                </linearGradient>
+                <linearGradient id="grad2" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" style="stop-color:rgb(255,255,0);stop-opacity:1" />
+                  <stop offset="100%" style="stop-color:rgb(0,255,0);stop-opacity:1" />
+                </linearGradient>
+                <linearGradient id="grad3" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" style="stop-color:rgb(255,0,0);stop-opacity:1" />
+                  <stop offset="100%" style="stop-color:rgb(0,0,255);stop-opacity:1" />
+                </linearGradient>
+              </defs>
+            </svg>
+          </div>
+
+          <button id="next-song" class="btn" style="background: linear-gradient(45deg, #00c6ff, #0072ff); border: none; color: white; opacity: {% if next_lagu is None %}0.5{% else %}1{% endif %}; cursor: {% if next_lagu is None %}not-allowed{% else %}pointer{% endif %};">
+            →
+          </button>
+        </div>
       </div>
     </div>
 
@@ -34,29 +88,32 @@ Play {{ lagu.judul }}
           <p class="lyric-line" data-timestamp="{{ line.timestamp }}" style="display: none;">{{ line.text }}</p>
         {% endfor %}
       </div>
+
     </div>
   </div>
 
   <hr>
 
-  <h3 class="mt-5 text-center">Rekomendasi Lagu Lainnya</h3>
-  <div class="row">
+  <div class="row mt-4">
+    <h1 class="text-center mb-3">Lagu Lainnya</h1>
     {% for another in another_lagus %}
     <div class="col-md-4 mb-4">
-      <div class="icard shadow-sm border-0 rounded-lg">
-        <a href="{% url 'base:detail_lagu' another.pk %}">
+      <div class="icard card shadow-sm border-0 rounded-lg h-100">
+        <a href="{% url 'base:detail_lagu' another.pk %}" class="text-decoration-none">
+          <!-- Gambar lagu -->
           <img src="{{ another.audio_img.url }}" alt="{{ another.judul }}" class="card-img-top rounded-top equal-height-img">
           <div class="card-body">
-            <h5 class="card-title">{{ another.judul }}</h5>
-            <p class="card-text"><strong style="color:#555">Artis:</strong> <a href="{% url 'base:profil_artis' another.artis.pk %}" class="text-decoration-none">{{ another.artis }}</a></p>
-            <p class="card-text"><strong>Album:</strong> <a href="{% url 'base:detail_album' another.album.pk %}" class="text-decoration-none">{{ another.album }}</a></p>
-            <p class="card-text"><strong>Genre:</strong> <a href="{% url 'base:detail_genre' another.genre.pk %}" class="text-decoration-none">{{ another.genre }}</a></p>
+            <h5 class="card-title text-truncate" style="font-size: 1.1rem; font-weight: 600;">{{ another.judul }}</h5>
+            <p class="card-text text-muted mb-1"><strong style="color: #555; font-weight: bold;">Artis:</strong> <a href="{% url 'base:profil_artis' another.artis.pk %}" class="text-decoration-none text-primary">{{ another.artis }}</a></p>
+            <p class="card-text text-muted mb-1"><strong>Album:</strong> <a href="{% url 'base:detail_album' another.album.pk %}" class="text-decoration-none text-primary">{{ another.album }}</a></p>
+            <p class="card-text text-muted mb-1"><strong>Genre:</strong> <a href="{% url 'base:detail_genre' another.genre.pk %}" class="text-decoration-none text-primary">{{ another.genre }}</a></p>
           </div>
         </a>
       </div>
     </div>
     {% endfor %}
   </div>
+  
 </div>
 
 <style>
@@ -72,7 +129,7 @@ Play {{ lagu.judul }}
 
   .equal-height-img {
     width: 100%;
-    height: 300px;
+    height: 400px;
     object-fit: cover;
   }
 
@@ -176,6 +233,67 @@ Play {{ lagu.judul }}
       }
     }
   };
+
+  const nextSongUrl = "{% if next_lagu %}{% url 'base:detail_lagu' next_lagu.pk %}{% else %}null{% endif %}";
+  const prevSongUrl = "{% if previous_lagu %}{% url 'base:detail_lagu' previous_lagu.pk %}{% else %}null{% endif %}";
+
+  const nextButton = document.getElementById('next-song');
+  const prevButton = document.getElementById('prev-song');
+
+  nextButton.addEventListener('click', function () {
+    if (nextSongUrl !== "null") {
+      window.location.href = nextSongUrl;
+    }
+  });
+
+  prevButton.addEventListener('click', function () {
+    if (prevSongUrl !== "null") {
+      window.location.href = prevSongUrl;
+    }
+  });
+
+  let lastKeyPressTime = 0;
+  const DOUBLE_TAP_THRESHOLD = 300;
+
+  document.addEventListener('keydown', function (e) {
+    const currentTime = new Date().getTime();
+
+    if (e.key === 'ArrowRight') {
+      if (currentTime - lastKeyPressTime <= DOUBLE_TAP_THRESHOLD) {
+        if (nextSongUrl !== "null") {
+          window.location.href = nextSongUrl;
+        }
+      }
+      lastKeyPressTime = currentTime;
+    }
+
+    if (e.key === 'ArrowLeft') {
+      if (currentTime - lastKeyPressTime <= DOUBLE_TAP_THRESHOLD) {
+        if (prevSongUrl !== "null") {
+          window.location.href = prevSongUrl;
+        }
+      }
+      lastKeyPressTime = currentTime;
+    }
+  });
+
+  const songModal = new bootstrap.Modal(document.getElementById('song-modal'));
+  const playSongBtn = document.getElementById('play-song-btn');
+  const songSelect = document.getElementById('song-select');
+
+  playSongBtn.addEventListener('click', function () {
+    const selectedSongId = songSelect.value;
+
+    if (selectedSongId) {
+      window.location.href = `/lagu/detail/${selectedSongId}`;
+    }
+  });
+
+  document.addEventListener('keydown', function(e) {
+    if (e.key === "]") {
+      songModal.show();
+    }
+  });
 </script>
 
 {% endblock content %}

@@ -155,23 +155,17 @@ def daftar_lagu(request):
 
 @login_required
 def detail_lagu(request, pk):
-    get_lagu = Lagu.objects.get(pk=pk)
-    another_lagu = Lagu.objects.exclude(pk=get_lagu.pk).filter(genre=get_lagu.genre)
-
-    another_lagu = random.sample(list(another_lagu), min(len(another_lagu), 20))
-
-    lirik = None
-
     try:
-        lagu = Lagu.objects.get(id=get_lagu.id)
+        get_lagu = Lagu.objects.get(pk=pk)
+        another_lagu = Lagu.objects.exclude(pk=get_lagu.pk).filter(genre=get_lagu.genre)
+        another_lagu = random.sample(list(another_lagu), min(len(another_lagu), 20))
 
         lirik = None
-        if lagu.lirik_file:
-            with open(lagu.lirik_file.path, 'r', encoding='utf-8') as file:
+        if get_lagu.lirik_file:
+            with open(get_lagu.lirik_file.path, 'r', encoding='utf-8') as file:
                 lirik = []
                 for line in file:
                     if ']' in line:
-
                         timestamp = line.split(']')[0][1:]
                         lyric_text = line.split(']')[1].strip()
                         lirik.append({
@@ -179,13 +173,19 @@ def detail_lagu(request, pk):
                             'text': lyric_text
                         })
 
+        previous_lagu = Lagu.objects.filter(id__lt=get_lagu.id).order_by('-id').first()
+        next_lagu = Lagu.objects.filter(id__gt=get_lagu.id).order_by('id').first()
+
         return render(request, 'base/Lagu/detail_lagu.html', {
-            'lagu': lagu,
+            'lagu': get_lagu,
             'lirik': lirik,
-            'another_lagus': another_lagu
+            'another_lagus': another_lagu,
+            'previous_lagu': previous_lagu,
+            'next_lagu': next_lagu,
         })
     except Lagu.DoesNotExist:
         raise Http404("Lagu tidak ditemukan")
+
 
     context = {
         'lagu': get_lagu,
