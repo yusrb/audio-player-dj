@@ -343,7 +343,6 @@ def detail_genre(request, pk):
   get_genre = Genre.objects.get(pk=pk)
   all_lagu_with_genre = get_genre.lagu_set.all()
 
-  all_lagu_with_genre = random.sample(list(all_lagu_with_genre), min(len(all_lagu_with_genre), 15))
 
   search_query = request.GET.get('q')
 
@@ -351,6 +350,8 @@ def detail_genre(request, pk):
     all_lagu_with_genre = all_lagu_with_genre.filter(
       Q(judul__icontains=search_query)
     )
+
+  all_lagu_with_genre = random.sample(list(all_lagu_with_genre), min(len(all_lagu_with_genre), 15))
 
   context = {
     'genre': get_genre,

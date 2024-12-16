@@ -6,30 +6,47 @@
 
 {% block content %}
 <div class="container-fluid mt-4">
-  <a href="javascript:history.back()" class="btn btn-link">Kembali</a>
+  <a href="javascript:history.back()" class="btn btn-link">
+    <i class="fas fa-arrow-left"></i> Kembali
+  </a>
 
   <div class="row mt-4">
     <div class="col-md-4 text-center mb-4">
-      <h1>{{ genre.nama }}</h1>
+      <h1 class="display-4 text-dark mb-3">{{ genre.nama }}</h1>
 
       <form method="GET" action="{% url 'base:detail_genre' genre.pk %}" class="mb-4">
-        <div class="input-group" style="width: 80%; position:relative; left:50px">
-          <input type="text" name="q" value="{{ search_query }}" class="form-control" placeholder="Cari Lagu...">
-          <button class="btn btn-outline-secondary" type="submit">Cari</button>
+        <div class="input-group" style="width: 100%; max-width: 400px; margin: 0 auto;">
+          <input type="text" name="q" value="{{ search_query }}" class="form-control border-0 py-2" placeholder="Cari Lagu..." style="border-radius: 30px; background-color: #f1f1f1;">
+          <button class="btn btn-dark" type="submit" style="border-radius: 30px;">
+            <i class="fas fa-search"></i>
+          </button>
         </div>
       </form>
     </div>
 
     <div class="col-md-8">
-      <h3 class="mb-4">Daftar Lagu dengan Genre {{ genre.nama }}</h3>
+      <h3 class="mb-4 text-center text-dark">Daftar Lagu dengan Genre {{ genre.nama }}</h3>
       <div class="list-group">
         {% for lagu in all_lagu_with_genres %}
-          <a href="{% url 'base:detail_lagu' lagu.pk %}" class="list-group-item list-group-item-action">
-            <h5 class="mb-1">{{ lagu.judul }}</h5>
+          <a href="{% url 'base:detail_lagu' lagu.pk %}" class="list-group-item list-group-item-action py-3 px-4 shadow-sm rounded mb-3 transition ease-in-out">
+            <h5 class="mb-1 text-dark">{{ lagu.judul }}</h5>
           </a>
+        {% empty %}
+          <div class="alert alert-warning text-center">Tidak ada lagu dalam genre ini.</div>
         {% endfor %}
       </div>
     </div>
   </div>
 </div>
+
+<style>
+  .list-group-item {
+    transition: all 0.3s ease-in-out;
+  }
+
+  .list-group-item:hover {
+    transform: scale(1.05);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+  }
+</style>
 {% endblock content %}
